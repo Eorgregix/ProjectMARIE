@@ -132,10 +132,20 @@ function loadSkills(skillArray) {
 	{
 		skillDiv.innerHTML += "<table><tr><td>";
 		skillDiv.innerHTML += addSkill(i, skillArray.skill[i].name, skillArray.skill[i].type, skillArray.skill[i].matiere, skillArray.skill[i].min, skillArray.skill[i].max, skillArray.skill[i].defaultVal, skillArray.skill[i].imgPath);
-		skillDiv.innerHTML += "</td></tr></table>";
+		skillDiv.innerHTML += "</td><td><button id='removeButton"+i+"' onclick='removeItem("+i+")'> X </button></td></tr></table>";
 	}
 
-	skillDiv.innerHTML += "<p class='links'><a onclick='addCount()''>Nouvelle compétence</a><a onclick='save()' title='b0x w'>Sauvegarder</a></p>";
+	skillDiv.innerHTML += "</br><p class='links'><a onclick='addCount()''>Nouvelle compétence</a><a onclick='save()' title='b0x w'>Sauvegarder</a></p>";
+}
+
+function removeItem(id) {
+	skillsG.skill.splice(id, 1);
+	skillCount--;
+	if(skillsG.skill.length == 0) {
+		createSkill();
+	}
+	else
+	loadSkills(skillsG);
 }
 
 function addCount() {
