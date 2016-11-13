@@ -1,0 +1,256 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--
+Design by TEMPLATED
+http://templated.co
+Released for free under the Creative Commons Attribution License
+
+Name       : Red &amp; Black
+Description: A two-column, fixed-width design with dark color scheme.
+Version    : 1.0
+Released   : 20120513
+
+-->
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta name="keywords" content="" />
+<meta name="description" content="" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title>Gestionnaire de compétences</title>
+<link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
+<link href="style.css" rel="stylesheet" type="text/css" media="screen" />
+
+
+</head>
+<body>
+<div id="wrapper">
+	<div id="header-wrapper">
+		<div id="header">
+                	<img src="./img-head.jpg" alt="" width="1000" height="329" />
+			<div id="menu">
+				<ul>
+					<li><a href="./index.html">Classes</a></li>
+					<li ><a href="./backoffice.html">Compétences</a></li>
+					<li class="current_page_item"><a href="./backofficeClasse.html">élèves</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<!-- end #header -->
+	<div id="page">
+		<div id="page-bgtop">
+			<div id="page-bgbtm">
+				<div id="content">
+					<div class="post">
+						<h2 class="title"><a href="#">Charger des élèves</a></h2>
+						<div class="entry">
+							<input type="file" id="file-input"/>
+							<pre id="file-content" style="display:none"></pre>
+						</div>
+					</div>
+					<div style="clear: both;">&nbsp;</div>
+				</div>
+				<div id="content">
+					<div class="post">
+						<h2 class="title"><a href="#">Créer des élèves</a></h2>
+						<div class="entry">
+							<button id="butt"  onclick="createSkill()">Créer</button>
+						</div>
+					</div>
+					<div style="clear: both;">&nbsp;</div>
+				</div>
+				<div id="content">
+					<div class="post new-kid">
+						<div class="entry" id="skills">
+						</div>
+					</div>
+					<div style="clear: both;">&nbsp;</div>
+				</div>
+				<!-- end #content -->
+
+				<!-- end #sidebar -->
+				<div style="clear: both;">&nbsp;</div>
+			</div>
+		</div>
+	</div>
+	<!-- end #page -->
+	<div id="footer">
+		<p>&copy; Untitled. Design by <a href="http://templated.co" rel="nofollow">TEMPLATED</a>.</p>
+	</div>
+</div>
+<!-- end #footer -->
+
+<script>
+  function readSingleFile(e) {
+  var file = e.target.files[0];
+  if (!file) {
+    return;
+  }
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var contents = e.target.result;
+    displayContents(contents);
+  };
+  reader.readAsText(file);
+}
+
+function displayContents(contents) {
+  var element = document.getElementById('file-content');
+  element.innerHTML = contents;
+  skillsG = JSON.parse(contents);
+  skillCount = skillsG.eleve.length;
+  loadSkills(skillsG);
+}
+
+document.getElementById('file-input')
+  .addEventListener('change', readSingleFile, false);
+
+var genSkill = {
+	name:"Nom",
+	prenom:"Prénom",
+	imgPath:"none"
+	};
+var skillsG = {classe:"Classe", eleve:[genSkill]};
+
+var skillCount = 1;
+
+function createSkill() {
+	skillsG = {classe:"Classe", eleve:[genSkill]};
+	skillCount = 1;
+	loadSkills(skillsG);
+}
+
+function loadSkills(skillArray) {
+
+	var skillDiv = document.getElementById("skills");
+	//skillArray is empty so we fill with default value and will create a new json
+	skillDiv.innerHTML = "<div id='skill0' >"+ addTextInput("classe", "Classe" , skillArray.classe) +"</div>";
+	for(var i = 0; i < skillCount; i++)
+	{
+		skillDiv.innerHTML += "<table><tr><td>";
+		skillDiv.innerHTML += addEleve(i, skillArray.eleve[i].name, skillArray.eleve[i].prenom, skillArray.eleve[i].imgPath);
+		skillDiv.innerHTML += "</td><td><button id='removeButton"+i+"' onclick='removeItem("+i+")'> X </button></td></tr></table>";
+	}
+
+	skillDiv.innerHTML += "</br><p class='links'><a onclick='addCount()''>Nouvel élève</a><a onclick='save()' title='b0x w'>Sauvegarder</a></p>";
+}
+
+function removeItem(id) {
+	skillsG.eleve.splice(id, 1);
+	skillCount--;
+	if(skillsG.eleve.length == 0) {
+		createSkill();
+	}
+	else
+	loadSkills(skillsG);
+}
+
+function addCount() {
+
+	skillsG.classe = document.getElementById("classe").value;
+	//skillsG.skill = [];
+	for(var i = 0; i < skillCount; i++)
+	{
+		var path = document.getElementById("img"+i).src.split("images")[1];
+		var sk = {
+		name:document.getElementById("nom"+i).value,
+		prenom:document.getElementById("prenom"+i).value,
+		imgPath:"./images"+path
+		};
+		skillsG.eleve[i] = sk;
+	}
+	skillsG.eleve.push(genSkill);
+	skillCount++;
+	loadSkills(skillsG);
+}
+
+function save() {
+	skillsG.classe = document.getElementById("classe").value;
+	//skillsG.skill = [];
+	for(var i = 0; i < skillCount; i++)
+	{
+		var path = document.getElementById("img"+i).src.split("images")[1];
+		var sk = {
+		name:document.getElementById("nom"+i).value,
+		prenom:document.getElementById("prenom"+i).value,
+		imgPath:"./images"+path
+		};
+		skillsG.eleve[i] = sk;
+	}
+	skillsG.eleve.sort(function(a, b) {
+			if(a.name < b.name){
+				return -1;
+			}
+			if(a.name > b.name){
+				return 1;
+			}
+			if(a.prenom < b.prenom){
+				return -1;
+			}
+			if(a.prenom > b.prenom){
+				return 1;
+			}
+			return 0
+	});
+	var data = JSON.stringify(skillsG);
+	var url = "data:application/octet-stream,"+ encodeURIComponent(data);
+	//var newWindow = window.open(url, 'neuesDokument');
+	var link = document.createElement('a');
+    link.download = skillsG.classe+"Eleves.json";
+    link.href = url;
+    link.click();
+}
+
+function addEleve(count, name, prenom, img) {
+	ret = "<table style='box-shadow: 0px 2px 10px #8e8e8e; padding: 15px;'><tr>";
+	ret += "</tr><tr>";
+	ret += addTextInput("nom"+count, "Nom", name);
+	ret += "</tr><tr>";
+	ret += addTextInput("prenom"+count, "Prénom", prenom);
+	ret += "</tr><tr>";
+	ret += addImg("img"+count, count, "Vignette", img);
+	ret += "</tr>";
+	ret += "</table>"
+	return ret;
+}
+
+function addTextInput(id, title, content) {
+	var ret = "<td><text>"+title+"</text></td> <td><input id='"+id+"' value='"+content+"'/></td>";
+
+	return ret;
+}
+
+function addImg(id, count, title, content) {
+
+	var ret = "<td><text>"+title+"</text></td><td id='td"+id+"'>";
+	if (content == "none")
+	{
+		ret += "<input type='file' onchange='readURL(this, \""+id+"\", \""+count+"\");' /></td>";
+	}
+	else
+	{
+		ret += "<img id='"+id+"' width='200' height='200' onclick='resetIMG(\""+count+"\")'src='"+content+"'/></td>";
+	}
+
+	return ret;
+}
+
+function resetIMG (count) {
+	skillsG.eleve[count].imgPath = "none";
+	loadSkills(skillsG);
+}
+
+function readURL(input, id, count) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            document.getElementById("td"+id).innerHTML = "<img id='"+id+"' width='200' height='200' onclick='resetIMG(\""+count+"\")' src='./images/"+input.files[0].name+"'/></td>";
+        };
+
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+</script>
+</body>
+</html>

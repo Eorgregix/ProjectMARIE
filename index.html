@@ -1,0 +1,423 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--
+Design by TEMPLATED
+http://templated.co
+Released for free under the Creative Commons Attribution License
+
+Name       : Red &amp; Black
+Description: A two-column, fixed-width design with dark color scheme.
+Version    : 1.0
+Released   : 20120513
+
+-->
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta name="keywords" content="" />
+<meta name="description" content="" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title>Gestionnaire de compétences</title>
+<link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
+<link href="style.css" rel="stylesheet" type="text/css" media="screen" />
+
+
+</head>
+<body>
+
+<div id="wrapper">
+	<div id="header-wrapper">
+		<div id="header">
+        	<img src="./img-head.jpg" alt="" width="1000" height="329" />
+			<div id="menu">
+				<ul>
+					<li class="current_page_item"><a href="./index.html">Classes</a></li>
+					<li ><a href="./backoffice.html">Compétences</a></li>
+					<li ><a href="./backofficeClasse.html">élèves</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<!-- end #header -->
+	<div id="page">
+		<div id="page-bgtop">
+			<div id="page-bgbtm">
+				<div id="content">
+					<div class="post">
+						<h2 class="title"><a href="#">Charger une classe</a></h2>
+						<div class="entry">
+							<input type="file" id="file-input"/>
+							<pre id="file-content" style="display:none"></pre>
+						</div>
+					</div>
+					<div style="clear: both;">&nbsp;</div>
+				</div>
+				<div id="content">
+					<div class="post">
+						<h2 class="title"><a href="#">Créer une classe</a></h2>
+						<div class="entry">
+							<button id="butt"  onclick="createClasse()">Créer</button>
+							<table><tr><td>
+								<text id="classeText" style="display:none">élèves      :</text></td><td><input type="file" id="file-inputClasse" style="display:none"/></td></tr>
+								<pre id="file-contentClasse" style="display:none"></pre>
+								<tr><td><text id="skillText" style="display:none">Compétences :</text></td><td><input type="file" id="file-inputSkill" style="display:none"/></td></tr>
+								<pre id="file-contentSkill" style="display:none"></pre>
+							</table>
+						</div>
+					</div>
+					<div style="clear: both;">&nbsp;</div>
+				</div>
+				<div id="content">
+					<div class="post">
+						<div class="entry" id="skills">
+						</div>
+					</div>
+					<div style="clear: both;">&nbsp;</div>
+				</div>
+				<!-- end #content -->
+
+				<!-- end #sidebar -->
+				<div style="clear: both;">&nbsp;</div>
+			</div>
+		</div>
+	</div>
+	<!-- end #page -->
+</div>
+<!-- end #footer -->
+
+<script>
+  function readSingleFile(e) {
+  var file = e.target.files[0];
+  if (!file) {
+    return;
+  }
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var contents = e.target.result;
+    displayContents(contents);
+  };
+  reader.readAsText(file);
+}
+
+function readSingleFileClasse(e) {
+  var file = e.target.files[0];
+  if (!file) {
+    return;
+  }
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var contents = e.target.result;
+    displayContentsClasse(contents);
+  };
+  reader.readAsText(file);
+}
+
+function readSingleFileSkill(e) {
+  var file = e.target.files[0];
+  if (!file) {
+    return;
+  }
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var contents = e.target.result;
+    displayContentsSkill(contents);
+  };
+  reader.readAsText(file);
+}
+
+function displayContents(contents) {
+  var element = document.getElementById('file-content');
+  element.innerHTML = contents;
+  general = JSON.parse(contents);
+  loadClasse(general);
+}
+
+function displayContentsClasse(contents) {
+  var element = document.getElementById('file-contentClasse');
+  element.innerHTML = contents;
+  classesG = JSON.parse(contents);
+  eleveCount = classesG.eleve.length;
+  //loadSkills(skillsG);
+
+	document.getElementById('file-inputSkill').style = "";
+	document.getElementById('skillText').style = "";
+}
+
+function displayContentsSkill(contents) {
+  var element = document.getElementById('file-contentSkill');
+  element.innerHTML = contents;
+  skillsG = JSON.parse(contents);
+  skillCount = skillsG.skill.length;
+
+  for(var i = 0; i < skillCount; i++) {
+  	var skill = {
+  		skill:JSON.parse(JSON.stringify(skillsG.skill[i])),
+  		value:skillsG.skill[i].defaultVal,
+  		photoPath:"none"
+  	};
+  	skillArray[i] = skill;
+  }
+
+  for(var i = 0; i < eleveCount; i++) {
+  	var eleve = {
+  		eleve:JSON.parse(JSON.stringify(classesG.eleve[i])),
+  		skillArray:JSON.parse(JSON.stringify(skillArray))
+  	};
+  	general.eleve[i] = eleve;
+  }
+  loadClasse(general);
+}
+
+document.getElementById('file-input')
+  .addEventListener('change', readSingleFile, false);
+
+document.getElementById('file-inputClasse')
+  .addEventListener('change', readSingleFileClasse, false);
+
+document.getElementById('file-inputSkill')
+  .addEventListener('change', readSingleFileSkill, false);
+
+var genSkill = {
+	name:"Nom",
+	type:"Type",
+	min:"0",
+	max:"40",
+	defaultVal:"0",
+	imgPath:"none"
+	};
+
+var genEleve = {
+	name:"Nom",
+	prenom:"Prénom",
+	imgPath:"none"
+	};
+
+var skillEleve = {
+	skill:genSkill,
+	value:"0",
+	photoPath:"none"
+	};
+
+var genClasse = {
+	eleve:genEleve,
+	skillArray:[skillEleve]
+	};
+
+var skillArray = [skillEleve];
+
+var skillsG = {classe:"Classe", skill:[genSkill]};
+var classesG = {classe:"Classe", eleve:[genEleve]};
+
+var general = {classe:"Classe", eleve:[genClasse]};
+
+var skillCount = 1;
+var eleveCount = 1;
+
+function createClasse() {
+	document.getElementById('butt').style = "display:none";
+	document.getElementById('classeText').style = "";
+	document.getElementById('file-inputClasse').style = "";
+}
+
+function createSkill() {
+	skillsG = {classe:"Classe", skill:[genSkill]};
+	skillCount = 1;
+	loadSkills(skillsG);
+}
+
+function loadClasse(skillArray) {
+
+	var skillDiv = document.getElementById("skills");
+	//skillArray is empty so we fill with default value and will create a new json
+	skillDiv.innerHTML = "<div id='skill0' >"+ addTextInput("classe", "Classe" , skillArray.classe) +"</div>";
+	for(var i = 0; i < general.eleve.length; i++)
+	{
+		skillDiv.innerHTML += "<table><tr><td>";
+		skillDiv.innerHTML += addEleve(i, skillArray.eleve[i].eleve.name, skillArray.eleve[i].eleve.prenom, skillArray.eleve[i].eleve.imgPath);
+		skillDiv.innerHTML += "</td></tr></table>";
+	}
+
+	skillDiv.innerHTML += "<p class='links'>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a onclick='save()'>Sauvegarder</a></p>";
+}
+
+function loadEleve(skillArray, eleve, matiere) {
+
+	var skillDiv = document.getElementById("skills");
+	//skillArray is empty so we fill with default value and will create a new json
+	skillDiv.innerHTML = "<div id='skill0' >"+ addText(skillArray.eleve[eleve].eleve.prenom) + " "+ skillArray.eleve[eleve].eleve.name +"</br> <img src'"+skillArray.eleve[eleve].eleve.imgPath+"' width='75' height'75'/></div>";
+	for(var i = 0; i < general.eleve[eleve].skillArray.length; i++)
+	{
+		if(general.eleve[eleve].skillArray[i].skill.matiere == matiere) {
+			skillDiv.innerHTML += "<table><tr><td>";
+			skillDiv.innerHTML += addSkill(i,eleve, matiere, skillArray.eleve[eleve].skillArray[i].skill.name, skillArray.eleve[eleve].skillArray[i].skill.type, skillArray.eleve[eleve].skillArray[i].skill.imgPath, skillArray.eleve[eleve].skillArray[i].value, skillArray.eleve[eleve].skillArray[i].photoPath);
+			skillDiv.innerHTML += "</td></tr></table>";
+		}
+	}
+
+	skillDiv.innerHTML += "<p class='links'><a onclick='loadClasse(general)''>Retour Classe</a>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a onclick='save()'>Sauvegarder</a></p>";
+}
+
+function loadMatiere(skillArray, eleve) {
+
+	var skillDiv = document.getElementById("skills");
+	//skillArray is empty so we fill with default value and will create a new json
+	//skillDiv.innerHTML = "<div id='skill0' >"+ addText(skillArray.eleve[eleve].eleve.prenom) + " "+ skillArray.eleve[eleve].eleve.name +"</br> <img src'"+skillArray.eleve[eleve].eleve.imgPath+"' width='75' height'75'/></div>";
+	var matiere = "";
+	skillDiv.innerHTML = "";
+	for(var i = 0; i < general.eleve[eleve].skillArray.length; i++)
+	{
+		if(general.eleve[eleve].skillArray[i].skill.matiere != matiere) {
+			matiere = general.eleve[eleve].skillArray[i].skill.matiere;
+			skillDiv.innerHTML += "<table><tr><td>";
+			skillDiv.innerHTML += "<button id='butt"+matiere+"' onclick='loadEleve(general, "+eleve+", \""+matiere+"\")'>"+matiere+"</button>";
+			skillDiv.innerHTML += "</td></tr></table>";
+		}
+	}
+
+	skillDiv.innerHTML += "</br><p class='links'><a onclick='loadClasse(general)''>Retour Classe</a>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a onclick='save()'>Sauvegarder</a></p>";
+}
+
+function addCount() {
+
+		skillsG.classe = document.getElementById("classe").value;
+	//skillsG.skill = [];
+	for(var i = 0; i < skillCount; i++)
+	{
+		var sk = {
+		name:document.getElementById("nom"+i).value,
+		type:document.getElementById("type"+i).value,
+		min:document.getElementById("min"+i).value,
+		max:document.getElementById("max"+i).value,
+		defaultVal:document.getElementById("defaultVal"+i).value,
+		imgPath:document.getElementById("img"+i).src
+		};
+		skillsG.skill[i] = sk;
+	}
+	skillsG.skill.push(genSkill);
+	skillCount++;
+	loadSkills(skillsG);
+}
+
+function save() {
+	if(document.getElementById("classe") != null)
+		general.classe = document.getElementById("classe").value;
+	var data = JSON.stringify(general);
+	var url = "data:application/octet-stream,"+ encodeURIComponent(data);
+	//var newWindow = window.open(url, 'neuesDokument');
+	var link = document.createElement('a');
+    link.download = general.classe+"Classe.json";
+    link.href = url;
+    link.click();
+}
+
+function addEleve(count, name, prenom, img) {
+	ret = "<table onclick='loadMatiere(general, "+count+")' style='border:solid 1px black;'><tr>";
+	ret += "</tr><td>";
+	ret += addText(prenom);
+	ret += addText(name);
+	ret += "</td></tr>";
+	ret += addClickableImg(count, "img"+count, img);
+	ret += "</tr>";
+	ret += "</table>"
+	return ret;
+}
+
+function addSkill(count,eleve, matiere, name, type, img, value, photo) {
+	ret = "<table style='border:solid 1px black;'><tr>";
+	ret += "</tr><td>";
+	ret += addText(name);
+	ret += addText(type);
+	ret += "</td></tr>";
+	ret += addNoClickableImg(count, "img"+count, img);
+	//if(photo != undefined)
+		ret += addImg("photo"+count, "", photo, eleve, count);
+	ret += "</tr><td>";
+	ret += addText("Valeur :");
+	ret += addText(value);
+	ret += "</td><td>";
+	ret += "<button id='minusButton' onclick='minus("+eleve+", "+count+", \""+matiere+"\")'> - </button><button id='plusButton' onclick='plus("+eleve+", "+count+", \""+matiere+"\")'> + </button>";
+	ret += "</tr>";
+	ret += "</table>"
+	return ret;
+}
+
+function minus(eleve, skill, matiere) {
+	var nb = parseInt(general.eleve[eleve].skillArray[skill].value);
+	nb--;
+	var min = parseInt(general.eleve[eleve].skillArray[skill].skill.min);
+	if (nb < min)
+		nb = min;
+	general.eleve[eleve].skillArray[skill].value = nb.toString();
+	loadEleve(general, eleve, matiere);
+}
+
+function plus(eleve, skill, matiere) {
+	var nb = parseInt(general.eleve[eleve].skillArray[skill].value);
+	nb++;
+	var max = parseInt(general.eleve[eleve].skillArray[skill].skill.max);
+	if (nb > max)
+		nb = max;
+	general.eleve[eleve].skillArray[skill].value = nb.toString();
+	loadEleve(general, eleve, matiere);
+}
+
+function addNoClickableImg(count, id, path)
+{
+	var ret = "<td><img id='"+id+"' width='300' height='300' src='"+path+"'/></td>";
+
+	return ret;
+}
+
+function addClickableImg(count, id, path)
+{
+	var ret = "<td><img id='"+id+"' width='300' height='300' src='"+path+"'/></td>";
+
+	return ret;
+}
+
+function addText(title) {
+	var ret = "<text>"+title+" </text>";
+
+	return ret;
+}
+
+function addTextInput(id, title, content) {
+	var ret = "<td><text>"+title+"</text></td> <td><input id='"+id+"' value='"+content+"'/></td>";
+
+	return ret;
+}
+
+function addImg(id, title, content, eleve, skill) {
+
+	var ret = "<td><text>"+title+"</text></td><td id='td"+id+"'>";
+	if (content == undefined || content == "none")
+	{
+		ret += "<input type='file' onchange='readURL(this, \""+id+"\", "+eleve+", "+skill+");' /></td>";
+	}
+	else
+	{
+		ret += "<img id='"+id+"' width='300' height='300' src='"+content+"'/></td>";
+	}
+
+	return ret;
+}
+
+function readURL(input, id, eleve, skill) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+		general.eleve[eleve].skillArray[skill].photoPath = "./photo/"+input.files[0].name;
+        reader.onload = function (e) {
+            document.getElementById("td"+id).innerHTML = "<img id='photo"+id+"' width='300' height='300' src='./photo/"+input.files[0].name+"'/></td>";
+        	//general.eleve[eleve].skillArray[skill].photoPath = document.getElementById("photo"+id).src;
+        };
+
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function lolilou(){
+	document.getElementById("butt").innerHTML = skills[0][0];
+	document.getElementById("butt").style = "display:none";
+}
+</script>
+</body>
+</html>
