@@ -135,7 +135,6 @@ function displayContentsClasse(contents) {
   element.innerHTML = contents;
   classesG = JSON.parse(contents);
   eleveCount = classesG.eleve.length;
-  //loadSkills(skillsG);
 
 	document.getElementById('file-inputSkill').style = "";
 	document.getElementById('skillText').style = "";
@@ -151,7 +150,7 @@ function displayContentsSkill(contents) {
   	var skill = {
   		skill:JSON.parse(JSON.stringify(skillsG.skill[i])),
   		value:skillsG.skill[i].defaultVal,
-  		photoPath:"none"
+  		photoPath:["none"]
   	};
   	skillArray[i] = skill;
   }
@@ -193,7 +192,7 @@ var genEleve = {
 var skillEleve = {
 	skill:genSkill,
 	value:"0",
-	photoPath:"none"
+	photoPath:["none"]
 	};
 
 var genClasse = {
@@ -327,8 +326,11 @@ function addSkill(count,eleve, matiere, name, type, img, value, photo) {
 	ret += addText(type);
 	ret += "</td></tr>";
 	ret += addNoClickableImg(count, "img"+count, img);
-	//if(photo != undefined)
-		ret += addImg("photo"+count, "", photo, eleve, count);
+
+	for(var i = 0; i < general.eleve[eleve].skillArray[count].photoPath.length; i++) {
+		ret += addImg(matiere, "photo"+i+count, i, "", photo[i], eleve, count);
+	}
+
 	ret += "</tr><td>";
 	ret += addText("Valeur :");
 	ret += addText(value);
@@ -385,12 +387,12 @@ function addTextInput(id, title, content) {
 	return ret;
 }
 
-function addImg(id, title, content, eleve, skill) {
+function addImg(matiere, id, num, title, content, eleve, skill) {
 
 	var ret = "<td><text>"+title+"</text></td><td id='td"+id+"'>";
 	if (content == undefined || content == "none")
 	{
-		ret += "<input type='file' onchange='readURL(this, \""+id+"\", "+eleve+", "+skill+");' /></td>";
+		ret += "<input type='file' onchange='readURL(this, \""+matiere+"\", "+num+", \""+id+"\", "+eleve+", "+skill+");' /></td>";
 	}
 	else
 	{
@@ -400,13 +402,15 @@ function addImg(id, title, content, eleve, skill) {
 	return ret;
 }
 
-function readURL(input, id, eleve, skill) {
+function readURL(input, matiere, num, id, eleve, skill) {
     if (input.files && input.files[0]) {
         var reader = new FileReader();
 
-		general.eleve[eleve].skillArray[skill].photoPath = "./photo/"+input.files[0].name;
+		general.eleve[eleve].skillArray[skill].photoPath[num] = "./photo/"+input.files[0].name;
         reader.onload = function (e) {
             document.getElementById("td"+id).innerHTML = "<img id='photo"+id+"' width='300' height='300' src='./photo/"+input.files[0].name+"'/></td>";
+						general.eleve[eleve].skillArray[skill].photoPath.push("none");
+						loadEleve(general, eleve, matiere);
         	//general.eleve[eleve].skillArray[skill].photoPath = document.getElementById("photo"+id).src;
         };
 
