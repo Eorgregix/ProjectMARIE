@@ -226,32 +226,43 @@ function loadClasse(skillArray) {
 
 	var skillDiv = document.getElementById("skills");
 	//skillArray is empty so we fill with default value and will create a new json
-	skillDiv.innerHTML = "<div id='skill0' >"+ addTextInput("classe", "Classe" , skillArray.classe) +"</div>";
+	var result ="";
+	result = "<div id='skill0' >"+ addTextInput("classe", "Classe" , skillArray.classe) +"</div>";
+	result += "<table><tr>";
+	var colCount = 0;
 	for(var i = 0; i < general.eleve.length; i++)
 	{
-		skillDiv.innerHTML += "<table><tr><td>";
-		skillDiv.innerHTML += addEleve(i, skillArray.eleve[i].eleve.name, skillArray.eleve[i].eleve.prenom, skillArray.eleve[i].eleve.imgPath);
-		skillDiv.innerHTML += "</td></tr></table>";
+		result += "<td>";
+		result += addEleve(i, skillArray.eleve[i].eleve.name, skillArray.eleve[i].eleve.prenom, skillArray.eleve[i].eleve.imgPath);
+		result += "</td>";
+		colCount++;
+		if( colCount == 3)
+			result += "</tr><tr>";
 	}
-
-	skillDiv.innerHTML += "<p class='links'>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a onclick='save()'>Sauvegarder</a></p>";
+	result += "</tr></table>";
+	result += "<p class='links'>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a onclick='save()'>Sauvegarder</a></p>";
+	skillDiv.innerHTML = result;
 }
 
 function loadEleve(skillArray, eleve, matiere) {
 
 	var skillDiv = document.getElementById("skills");
 	//skillArray is empty so we fill with default value and will create a new json
-	skillDiv.innerHTML = "<div id='skill0' >"+ addText(skillArray.eleve[eleve].eleve.prenom) + " "+ skillArray.eleve[eleve].eleve.name +"</br> <img src'"+skillArray.eleve[eleve].eleve.imgPath+"' width='75' height'75'/></div>";
+	var result ="";
+
+	result = "<div id='skill0' >"+ addText(skillArray.eleve[eleve].eleve.prenom) + " "+ skillArray.eleve[eleve].eleve.name +"</br> <img src'"+skillArray.eleve[eleve].eleve.imgPath+"' width='75' height'75'/></div>";
 	for(var i = 0; i < general.eleve[eleve].skillArray.length; i++)
 	{
 		if(general.eleve[eleve].skillArray[i].skill.matiere == matiere) {
-			skillDiv.innerHTML += "<table><tr><td>";
-			skillDiv.innerHTML += addSkill(i,eleve, matiere, skillArray.eleve[eleve].skillArray[i].skill.name, skillArray.eleve[eleve].skillArray[i].skill.type, skillArray.eleve[eleve].skillArray[i].skill.imgPath, skillArray.eleve[eleve].skillArray[i].value, skillArray.eleve[eleve].skillArray[i].photoPath);
-			skillDiv.innerHTML += "</td></tr></table>";
+			result += "<table><tr><td>";
+			result += addSkill(i,eleve, matiere, skillArray.eleve[eleve].skillArray[i].skill.name, skillArray.eleve[eleve].skillArray[i].skill.type, skillArray.eleve[eleve].skillArray[i].skill.imgPath, skillArray.eleve[eleve].skillArray[i].value, skillArray.eleve[eleve].skillArray[i].photoPath);
+			result += "</td></tr></table>";
 		}
 	}
 
-	skillDiv.innerHTML += "<p class='links'><a onclick='loadClasse(general)''>Retour Classe</a>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a onclick='save()'>Sauvegarder</a></p>";
+	result += "<p class='links'><a onclick='loadClasse(general)''>Retour Classe</a>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a onclick='save()'>Sauvegarder</a></p>";
+	skillDiv.innerHTML = result;
+
 }
 
 function loadMatiere(skillArray, eleve) {
@@ -260,18 +271,20 @@ function loadMatiere(skillArray, eleve) {
 	//skillArray is empty so we fill with default value and will create a new json
 	//skillDiv.innerHTML = "<div id='skill0' >"+ addText(skillArray.eleve[eleve].eleve.prenom) + " "+ skillArray.eleve[eleve].eleve.name +"</br> <img src'"+skillArray.eleve[eleve].eleve.imgPath+"' width='75' height'75'/></div>";
 	var matiere = "";
-	skillDiv.innerHTML = "";
+	var result = "";
 	for(var i = 0; i < general.eleve[eleve].skillArray.length; i++)
 	{
 		if(general.eleve[eleve].skillArray[i].skill.matiere != matiere) {
 			matiere = general.eleve[eleve].skillArray[i].skill.matiere;
-			skillDiv.innerHTML += "<table><tr><td>";
-			skillDiv.innerHTML += "<button id='butt"+matiere+"' onclick='loadEleve(general, "+eleve+", \""+matiere+"\")'>"+matiere+"</button>";
-			skillDiv.innerHTML += "</td></tr></table>";
+			result += "<table><tr><td>";
+			result += "<button id='buttMatiere"+i+"' data-eleve=\""+matiere+"\" onclick='loadEleve(general, "+eleve+", this.dataset.eleve);'>"+matiere+"</button>";
+			result += "</td></tr></table>";
 		}
 	}
 
-	skillDiv.innerHTML += "</br><p class='links'><a onclick='loadClasse(general)''>Retour Classe</a>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a onclick='save()'>Sauvegarder</a></p>";
+	result += "</br><p class='links'><a onclick='loadClasse(general)''>Retour Classe</a>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a onclick='save()'>Sauvegarder</a></p>";
+	skillDiv.innerHTML = result;
+
 }
 
 function addCount() {
@@ -308,7 +321,7 @@ function save() {
 }
 
 function addEleve(count, name, prenom, img) {
-	ret = "<table onclick='loadMatiere(general, "+count+")' style='border:solid 1px black;'><tr>";
+	ret = "<table onclick='loadMatiere(general, "+count+")' style='box-shadow: 0px 2px 10px #8e8e8e; padding: 15px;'><tr>";
 	ret += "</tr><td>";
 	ret += addText(prenom);
 	ret += addText(name);
@@ -320,44 +333,44 @@ function addEleve(count, name, prenom, img) {
 }
 
 function addSkill(count,eleve, matiere, name, type, img, value, photo) {
-	ret = "<table style='border:solid 1px black;'><tr>";
+	ret = "<table style='box-shadow: 0px 2px 10px #8e8e8e; padding: 15px;'><tr>";
 	ret += "</tr><td>";
 	ret += addText(name);
 	ret += addText(type);
 	ret += "</td></tr>";
 	ret += addNoClickableImg(count, "img"+count, img);
 
-	for(var i = 0; i < general.eleve[eleve].skillArray[count].photoPath.length; i++) {
+	for(var i = 0; i < photo.length; i++) {
 		ret += addImg(matiere, "photo"+i+count, i, "", photo[i], eleve, count);
 	}
 
 	ret += "</tr><td>";
 	ret += addText("Valeur :");
 	ret += addText(value);
-	ret += "</td><td>";
-	ret += "<button id='minusButton' onclick='minus("+eleve+", "+count+", \""+matiere+"\")'> - </button><button id='plusButton' onclick='plus("+eleve+", "+count+", \""+matiere+"\")'> + </button>";
+	//ret += "</td><td>";
+	ret += "<button align='right' id='minusButton"+count+"' data-skill="+count+" data-matiere=\""+matiere+"\" onclick='minus("+eleve+", this.dataset.skill, this.dataset.matiere)'> - </button><button  align='right' id='plusButton"+count+"' data-skill="+count+" data-matiere=\""+matiere+"\"  onclick='plus("+eleve+", this.dataset.skill, this.dataset.matiere)'> + </button>";
 	ret += "</tr>";
 	ret += "</table>"
 	return ret;
 }
 
-function minus(eleve, skill, matiere) {
-	var nb = parseInt(general.eleve[eleve].skillArray[skill].value);
+function minus(eleve, sCount, matiere) {
+	var nb = parseInt(general.eleve[eleve].skillArray[sCount].value);
 	nb--;
-	var min = parseInt(general.eleve[eleve].skillArray[skill].skill.min);
+	var min = parseInt(general.eleve[eleve].skillArray[sCount].skill.min);
 	if (nb < min)
 		nb = min;
-	general.eleve[eleve].skillArray[skill].value = nb.toString();
+	general.eleve[eleve].skillArray[sCount].value = nb.toString();
 	loadEleve(general, eleve, matiere);
 }
 
-function plus(eleve, skill, matiere) {
-	var nb = parseInt(general.eleve[eleve].skillArray[skill].value);
+function plus(eleve, sCount, matiere) {
+	var nb = parseInt(general.eleve[eleve].skillArray[sCount].value);
 	nb++;
-	var max = parseInt(general.eleve[eleve].skillArray[skill].skill.max);
+	var max = parseInt(general.eleve[eleve].skillArray[sCount].skill.max);
 	if (nb > max)
 		nb = max;
-	general.eleve[eleve].skillArray[skill].value = nb.toString();
+	general.eleve[eleve].skillArray[sCount].value = nb.toString();
 	loadEleve(general, eleve, matiere);
 }
 
@@ -382,7 +395,7 @@ function addText(title) {
 }
 
 function addTextInput(id, title, content) {
-	var ret = "<td><text>"+title+"</text></td> <td><input id='"+id+"' value='"+content+"'/></td>";
+	var ret = "<td><text>"+title+"</text></td> <td><input id='"+id+"' value=\""+content+"\"/></td>";
 
 	return ret;
 }
@@ -392,11 +405,11 @@ function addImg(matiere, id, num, title, content, eleve, skill) {
 	var ret = "<td><text>"+title+"</text></td><td id='td"+id+"'>";
 	if (content == undefined || content == "none")
 	{
-		ret += "<input type='file' onchange='readURL(this, \""+matiere+"\", "+num+", \""+id+"\", "+eleve+", "+skill+");' /></td>";
+		ret += "<input type='file' data-matiere=\""+matiere+"\" data-num="+num+" data-id=\""+id+"\" data-eleve="+eleve+" data-skill="+skill+" onchange='readURL(this, this.dataset.matiere, this.dataset.num, this.dataset.id, this.dataset.eleve, this.dataset.skill);' /></td>";
 	}
 	else
 	{
-		ret += "<img id='"+id+"' width='300' height='300' src='"+content+"'/></td>";
+		ret += "<img id='"+id+"' width='300' height='300' src='"+content+"' data-matiere=\""+matiere+"\" onclick='resetIMG ("+eleve+", "+skill+", this.dataset.matiere, "+num+")'/></td>";
 	}
 
 	return ret;
@@ -408,7 +421,7 @@ function readURL(input, matiere, num, id, eleve, skill) {
 
 		general.eleve[eleve].skillArray[skill].photoPath[num] = "./photo/"+input.files[0].name;
         reader.onload = function (e) {
-            document.getElementById("td"+id).innerHTML = "<img id='photo"+id+"' width='300' height='300' src='./photo/"+input.files[0].name+"'/></td>";
+            document.getElementById("td"+id).innerHTML = "<img id='photo"+id+"' width='300' height='300' src='./photo/"+input.files[0].name+"' data-matiere=\""+matiere+"\" onclick='resetIMG ("+eleve+", "+skill+", this.dataset.matiere, "+num+")'/></td>";
 						general.eleve[eleve].skillArray[skill].photoPath.push("none");
 						loadEleve(general, eleve, matiere);
         	//general.eleve[eleve].skillArray[skill].photoPath = document.getElementById("photo"+id).src;
@@ -416,6 +429,12 @@ function readURL(input, matiere, num, id, eleve, skill) {
 
         reader.readAsDataURL(input.files[0]);
     }
+}
+
+function resetIMG (eleve, skill, matiere, num) {
+	console.log("ok");
+	general.eleve[eleve].skillArray[skill].photoPath[num] = "none";
+	loadEleve(general, eleve, matiere);
 }
 
 function lolilou(){

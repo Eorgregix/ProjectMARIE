@@ -1,0 +1,1 @@
+{"classe":"Random","skill":[{"name":"Nom","type":"Type","matiere":"Agir, s'exprimer, comprendre à travers l'activité artistique","min":"0","max":"40","defaultVal":"0","imgPath":"./images/img01.jpg"},{"name":"Compter","type":"De 1 à 10","matiere":"Mathématique","min":"0","max":"40","defaultVal":"0","imgPath":"./images/img01.jpg"}]}

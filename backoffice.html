@@ -240,7 +240,7 @@ function addSkill(count, name, type, matiere, min, max, defaultVal, img) {
 }
 
 function addTextInput(id, title, content) {
-	var ret = "<td><text>"+title+"</text></td> <td><input id='"+id+"' value='"+content+"'/></td>";
+	var ret = "<td><text>"+title+"</text></td> <td><input id='"+id+"' value=\""+content+"\"/></td>";
 
 	return ret;
 }
@@ -278,6 +278,12 @@ function readURL(input, id, count) {
     }
 }
 
+function addslashes(ch) {
+	ch = ch.replace(/\\/g,"\\\\")
+	ch = ch.replace(/\'/g,"\\'")
+	ch = ch.replace(/\"/g,"\\\"")
+	return ch
+}
 </script>
 </body>
 </html>
