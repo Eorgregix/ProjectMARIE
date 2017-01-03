@@ -236,8 +236,10 @@ function loadClasse(skillArray) {
 		result += addEleve(i, skillArray.eleve[i].eleve.name, skillArray.eleve[i].eleve.prenom, skillArray.eleve[i].eleve.imgPath);
 		result += "</td>";
 		colCount++;
-		if( colCount == 3)
+		if( colCount == 3){
 			result += "</tr><tr>";
+			colCount = 0;
+		}
 	}
 	result += "</tr></table>";
 	result += "<p class='links'>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a onclick='save()'>Sauvegarder</a></p>";
@@ -251,6 +253,8 @@ function loadEleve(skillArray, eleve, matiere) {
 	var result ="";
 
 	result = "<div id='skill0' >"+ addText(skillArray.eleve[eleve].eleve.prenom) + " "+ skillArray.eleve[eleve].eleve.name +"</br> <img src'"+skillArray.eleve[eleve].eleve.imgPath+"' width='75' height'75'/></div>";
+	result += "<p class='links'><a onclick='loadClasse(general)'>Retour Classe</a>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a onclick='save()'>Sauvegarder</a></p>";
+
 	for(var i = 0; i < general.eleve[eleve].skillArray.length; i++)
 	{
 		if(general.eleve[eleve].skillArray[i].skill.matiere == matiere) {
@@ -260,7 +264,7 @@ function loadEleve(skillArray, eleve, matiere) {
 		}
 	}
 
-	result += "<p class='links'><a onclick='loadClasse(general)''>Retour Classe</a>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a onclick='save()'>Sauvegarder</a></p>";
+	result += "<p class='links'><a onclick='loadClasse(general)'>Retour Classe</a>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a onclick='save()'>Sauvegarder</a></p>";
 	skillDiv.innerHTML = result;
 
 }
@@ -334,14 +338,21 @@ function addEleve(count, name, prenom, img) {
 
 function addSkill(count,eleve, matiere, name, type, img, value, photo) {
 	ret = "<table style='box-shadow: 0px 2px 10px #8e8e8e; padding: 15px;'><tr>";
-	ret += "</tr><td>";
+	//ret += "<td width='200'>";
 	ret += addText(name);
 	ret += addText(type);
-	ret += "</td></tr>";
+	ret += "</tr><tr>";
 	ret += addNoClickableImg(count, "img"+count, img);
 
+	var photoCount = 0;
 	for(var i = 0; i < photo.length; i++) {
+		if(photoCount == 3)
+		{
+			ret += "</tr><tr><td><text><text></td>"
+			photoCount = 0;
+		}
 		ret += addImg(matiere, "photo"+i+count, i, "", photo[i], eleve, count);
+		photoCount++;
 	}
 
 	ret += "</tr><td>";
@@ -376,14 +387,14 @@ function plus(eleve, sCount, matiere) {
 
 function addNoClickableImg(count, id, path)
 {
-	var ret = "<td><img id='"+id+"' width='300' height='300' src='"+path+"'/></td>";
+	var ret = "<td><img id='"+id+"' width='200' height='200' src=\""+path+"\"/></td>";
 
 	return ret;
 }
 
 function addClickableImg(count, id, path)
 {
-	var ret = "<td><img id='"+id+"' width='300' height='300' src='"+path+"'/></td>";
+	var ret = "<td><img id='"+id+"' width='250' height='250' src=\""+path+"\"/></td>";
 
 	return ret;
 }
@@ -402,14 +413,14 @@ function addTextInput(id, title, content) {
 
 function addImg(matiere, id, num, title, content, eleve, skill) {
 
-	var ret = "<td><text>"+title+"</text></td><td id='td"+id+"'>";
+	var ret = "<td id='td"+id+"'>";
 	if (content == undefined || content == "none")
 	{
 		ret += "<input type='file' data-matiere=\""+matiere+"\" data-num="+num+" data-id=\""+id+"\" data-eleve="+eleve+" data-skill="+skill+" onchange='readURL(this, this.dataset.matiere, this.dataset.num, this.dataset.id, this.dataset.eleve, this.dataset.skill);' /></td>";
 	}
 	else
 	{
-		ret += "<img id='"+id+"' width='300' height='300' src='"+content+"' data-matiere=\""+matiere+"\" onclick='resetIMG ("+eleve+", "+skill+", this.dataset.matiere, "+num+")'/></td>";
+		ret += "<img id='"+id+"' width='300' height='300' src=\""+content+"\" data-matiere=\""+matiere+"\" onclick='resetIMG ("+eleve+", "+skill+", this.dataset.matiere, "+num+")'/></td>";
 	}
 
 	return ret;
@@ -421,8 +432,17 @@ function readURL(input, matiere, num, id, eleve, skill) {
 
 		general.eleve[eleve].skillArray[skill].photoPath[num] = "./photo/"+input.files[0].name;
         reader.onload = function (e) {
-            document.getElementById("td"+id).innerHTML = "<img id='photo"+id+"' width='300' height='300' src='./photo/"+input.files[0].name+"' data-matiere=\""+matiere+"\" onclick='resetIMG ("+eleve+", "+skill+", this.dataset.matiere, "+num+")'/></td>";
-						general.eleve[eleve].skillArray[skill].photoPath.push("none");
+            document.getElementById("td"+id).innerHTML = "<img id='photo"+id+"' width='300' height='300' src=\"./photo/"+input.files[0].name+"\" data-matiere=\""+matiere+"\" onclick='resetIMG ("+eleve+", "+skill+", this.dataset.matiere, "+num+")'/></td>";
+						var none = false;
+						for(var i = 0; i < general.eleve[eleve].skillArray[skill].photoPath.length; i++)
+						{
+							if (general.eleve[eleve].skillArray[skill].photoPath[i] == "none")
+							{
+								none = true;
+							}
+						}
+						if(!none)
+							general.eleve[eleve].skillArray[skill].photoPath.push("none");
 						loadEleve(general, eleve, matiere);
         	//general.eleve[eleve].skillArray[skill].photoPath = document.getElementById("photo"+id).src;
         };
@@ -432,7 +452,6 @@ function readURL(input, matiere, num, id, eleve, skill) {
 }
 
 function resetIMG (eleve, skill, matiere, num) {
-	console.log("ok");
 	general.eleve[eleve].skillArray[skill].photoPath[num] = "none";
 	loadEleve(general, eleve, matiere);
 }

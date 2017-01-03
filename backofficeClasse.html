@@ -122,16 +122,29 @@ function createSkill() {
 function loadSkills(skillArray) {
 
 	var skillDiv = document.getElementById("skills");
-	//skillArray is empty so we fill with default value and will create a new json
-	skillDiv.innerHTML = "<div id='skill0' >"+ addTextInput("classe", "Classe" , skillArray.classe) +"</div>";
+	var result ="";
+
+	result = "<div id='skill0' >"+ addTextInput("classe", "Classe" , skillArray.classe) +"</div>";
+	result += "</br><p class='links'><a onclick='addCount()''>Nouvel élève</a><a onclick='save()' title='b0x w'>Sauvegarder</a></p>";
+	result += "<table><tr>";
+	var colCount = 0;
 	for(var i = 0; i < skillCount; i++)
 	{
-		skillDiv.innerHTML += "<table><tr><td>";
-		skillDiv.innerHTML += addEleve(i, skillArray.eleve[i].name, skillArray.eleve[i].prenom, skillArray.eleve[i].imgPath);
-		skillDiv.innerHTML += "</td><td><button id='removeButton"+i+"' onclick='removeItem("+i+")'> X </button></td></tr></table>";
+		result += "<td>";
+		result += "<table><tr><td>";
+		result += addEleve(i, skillArray.eleve[i].name, skillArray.eleve[i].prenom, skillArray.eleve[i].imgPath);
+		result += "</td></tr><tr><td><button id='removeButton"+i+"' onclick='removeItem("+i+")'> X </button></td></tr></table>";
+		result += "</td>";
+		colCount++;
+		if( colCount == 3){
+			result += "</tr><tr>";
+			colCount = 0;
+		}
 	}
+	result += "</tr></table>";
+	result += "</br><p class='links'><a onclick='addCount()''>Nouvel élève</a><a onclick='save()' title='b0x w'>Sauvegarder</a></p>";
 
-	skillDiv.innerHTML += "</br><p class='links'><a onclick='addCount()''>Nouvel élève</a><a onclick='save()' title='b0x w'>Sauvegarder</a></p>";
+	skillDiv.innerHTML = result;
 }
 
 function removeItem(id) {
@@ -228,7 +241,7 @@ function addImg(id, count, title, content) {
 	}
 	else
 	{
-		ret += "<img id='"+id+"' width='200' height='200' onclick='resetIMG(\""+count+"\")'src='"+content+"'/></td>";
+		ret += "<img id='"+id+"' width='200' height='200' onclick='resetIMG(\""+count+"\")'src=\""+content+"\"/></td>";
 	}
 
 	return ret;
@@ -244,8 +257,9 @@ function readURL(input, id, count) {
         var reader = new FileReader();
 
         reader.onload = function (e) {
-            document.getElementById("td"+id).innerHTML = "<img id='"+id+"' width='200' height='200' onclick='resetIMG(\""+count+"\")' src='./images/"+input.files[0].name+"'/></td>";
-        };
+            document.getElementById("td"+id).innerHTML = "<img id='"+id+"' width='200' height='200' onclick='resetIMG(\""+count+"\")' src=\"./images/"+input.files[0].name+"\"/></td>";
+						skillsG.eleve[count].imgPath = "./images/"+input.files[0].name;
+				};
 
         reader.readAsDataURL(input.files[0]);
     }

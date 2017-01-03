@@ -126,16 +126,29 @@ function createSkill() {
 function loadSkills(skillArray) {
 
 	var skillDiv = document.getElementById("skills");
-	//skillArray is empty so we fill with default value and will create a new json
-	skillDiv.innerHTML = "<div id='skill0' >"+ addTextInput("classe", "Classe" , skillArray.classe) +"</div>";
+	var result ="";
+
+	result = "<div id='skill0' >"+ addTextInput("classe", "Classe" , skillArray.classe) +"</div>";
+	result += "</br><p class='links'><a onclick='addCount()''>Nouvelle compétence</a><a onclick='save()' title='b0x w'>Sauvegarder</a></p>";
+	result += "<table><tr>";
+	var colCount = 0;
 	for(var i = 0; i < skillCount; i++)
 	{
-		skillDiv.innerHTML += "<table><tr><td>";
-		skillDiv.innerHTML += addSkill(i, skillArray.skill[i].name, skillArray.skill[i].type, skillArray.skill[i].matiere, skillArray.skill[i].min, skillArray.skill[i].max, skillArray.skill[i].defaultVal, skillArray.skill[i].imgPath);
-		skillDiv.innerHTML += "</td><td><button id='removeButton"+i+"' onclick='removeItem("+i+")'> X </button></td></tr></table>";
+		result += "<td>";
+		result += "<table><tr><td>";
+		result += addSkill(i, skillArray.skill[i].name, skillArray.skill[i].type, skillArray.skill[i].matiere, skillArray.skill[i].min, skillArray.skill[i].max, skillArray.skill[i].defaultVal, skillArray.skill[i].imgPath);
+		result += "</td></tr><tr><td><button id='removeButton"+i+"' onclick='removeItem("+i+")'> X </button></td></tr></table>";
+		result += "</td>";
+		colCount++;
+		if( colCount == 3){
+			result += "</tr><tr>";
+			colCount = 0;
+		}
 	}
+	result += "</tr></table>";
+	result += "</br><p class='links'><a onclick='addCount()''>Nouvelle compétence</a><a onclick='save()' title='b0x w'>Sauvegarder</a></p>";
 
-	skillDiv.innerHTML += "</br><p class='links'><a onclick='addCount()''>Nouvelle compétence</a><a onclick='save()' title='b0x w'>Sauvegarder</a></p>";
+	skillDiv.innerHTML = result;
 }
 
 function removeItem(id) {
@@ -188,27 +201,27 @@ function save() {
 		};
 		skillsG.skill[i] = sk;
 	}
-	skillsG.skill.sort(function(a, b) {
-			if(a.matiere < b.matiere){
-				return -1;
-			}
-			if(a.matiere > b.matiere){
-				return 1;
-			}
-			if(a.name < b.name){
-				return -1;
-			}
-			if(a.name > b.name){
-				return 1;
-			}
-			if(a.type < b.type){
-				return -1;
-			}
-			if(a.type > b.type){
-				return 1;
-			}
-			return 0
-	});
+	// skillsG.skill.sort(function(a, b) {
+	// 		if(a.matiere < b.matiere){
+	// 			return -1;
+	// 		}
+	// 		if(a.matiere > b.matiere){
+	// 			return 1;
+	// 		}
+	// 		if(a.name < b.name){
+	// 			return -1;
+	// 		}
+	// 		if(a.name > b.name){
+	// 			return 1;
+	// 		}
+	// 		if(a.type < b.type){
+	// 			return -1;
+	// 		}
+	// 		if(a.type > b.type){
+	// 			return 1;
+	// 		}
+	// 		return 0
+	// });
 	var data = JSON.stringify(skillsG);
 	var url = "data:application/octet-stream,"+ encodeURIComponent(data);
 	//var newWindow = window.open(url, 'neuesDokument');
@@ -254,7 +267,7 @@ function addImg(id, count, title, content) {
 	}
 	else
 	{
-		ret += "<img id='"+id+"' width='200' height='200' onclick='resetIMG(\""+count+"\")'src='"+content+"'/></td>";
+		ret += "<img id='"+id+"' width='200' height='200' onclick='resetIMG(\""+count+"\")'src=\""+content+"\"/></td>";
 	}
 
 	return ret;
@@ -269,10 +282,10 @@ function readURL(input, id, count) {
     if (input.files && input.files[0]) {
         var reader = new FileReader();
 
-        console.log(input.files[0].mozFullPath);
         reader.onload = function (e) {
-            document.getElementById("td"+id).innerHTML = "<img id='"+id+"' width='200' height='200' onclick='resetIMG(\""+count+"\")' src='./images/"+input.files[0].name+"'/></td>";
-        };
+            document.getElementById("td"+id).innerHTML = "<img id='"+id+"' width='200' height='200' onclick='resetIMG(\""+count+"\")' src=\"./images/"+input.files[0].name+"\"/></td>";
+						skillsG.skill[count].imgPath = "./images/"+input.files[0].name;
+				};
 
         reader.readAsDataURL(input.files[0]);
     }
