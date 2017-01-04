@@ -252,8 +252,8 @@ function loadEleve(skillArray, eleve, matiere) {
 	//skillArray is empty so we fill with default value and will create a new json
 	var result ="";
 
-	result = "<div id='skill0' >"+ addText(skillArray.eleve[eleve].eleve.prenom) + " "+ skillArray.eleve[eleve].eleve.name +"</br> <img src'"+skillArray.eleve[eleve].eleve.imgPath+"' width='75' height'75'/></div>";
-	result += "<p class='links'><a onclick='loadClasse(general)'>Retour Classe</a>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a onclick='save()'>Sauvegarder</a></p>";
+	result = "<div id='skill0' >"+ addText(skillArray.eleve[eleve].eleve.prenom) + " "+ addText(skillArray.eleve[eleve].eleve.name) +"</br> <img src=\""+skillArray.eleve[eleve].eleve.imgPath+"\" width='75' height'75'/></br></br></br>";
+	result += "<p class='links'><a onclick='loadClasse(general)'>Retour Classe</a>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a onclick='save()'>Sauvegarder</a></p></br></br></br></br></br></div>";
 
 	for(var i = 0; i < general.eleve[eleve].skillArray.length; i++)
 	{
@@ -274,14 +274,20 @@ function loadMatiere(skillArray, eleve) {
 	var skillDiv = document.getElementById("skills");
 	//skillArray is empty so we fill with default value and will create a new json
 	//skillDiv.innerHTML = "<div id='skill0' >"+ addText(skillArray.eleve[eleve].eleve.prenom) + " "+ skillArray.eleve[eleve].eleve.name +"</br> <img src'"+skillArray.eleve[eleve].eleve.imgPath+"' width='75' height'75'/></div>";
-	var matiere = "";
+	var matiere = [];
+	var matInside = false;
 	var result = "";
 	for(var i = 0; i < general.eleve[eleve].skillArray.length; i++)
 	{
-		if(general.eleve[eleve].skillArray[i].skill.matiere != matiere) {
-			matiere = general.eleve[eleve].skillArray[i].skill.matiere;
+		for(var j = 0; j < matiere.length; j++) {
+			if(matiere[j] == general.eleve[eleve].skillArray[i].skill.matiere) {
+				matInside = true;
+			}
+		}
+		if(!matInside) {
+			matiere.push(general.eleve[eleve].skillArray[i].skill.matiere);
 			result += "<table><tr><td>";
-			result += "<button id='buttMatiere"+i+"' data-eleve=\""+matiere+"\" onclick='loadEleve(general, "+eleve+", this.dataset.eleve);'>"+matiere+"</button>";
+			result += "<button id='buttMatiere"+i+"' data-eleve=\""+matiere[matiere.length-1]+"\" onclick='loadEleve(general, "+eleve+", this.dataset.eleve);'>"+matiere[matiere.length-1]+"</button>";
 			result += "</td></tr></table>";
 		}
 	}
