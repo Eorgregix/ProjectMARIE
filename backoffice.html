@@ -189,7 +189,15 @@ function save() {
 	//skillsG.skill = [];
 	for(var i = 0; i < skillCount; i++)
 	{
-		var path = document.getElementById("img"+i).src.split("images")[1];
+		var split =document.getElementById("img"+i).src.split("images");
+		var path = split[1];
+		if(split.length > 2)
+		{
+			for(var j = 2; j < split.length; j++)
+			{
+				path += "images"+split[j];
+			}
+		}
 		var sk = {
 		name:document.getElementById("nom"+i).value,
 		type:document.getElementById("type"+i).value,
@@ -199,6 +207,7 @@ function save() {
 		defaultVal:document.getElementById("defaultVal"+i).value,
 		imgPath:"./images"+path
 		};
+
 		skillsG.skill[i] = sk;
 	}
 	// skillsG.skill.sort(function(a, b) {

@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--
+Design by TEMPLATED
+http://templated.co
+Released for free under the Creative Commons Attribution License
+
+Name       : Red &amp; Black
+Description: A two-column, fixed-width design with dark color scheme.
+Version    : 1.0
+Released   : 20120513
+
+-->
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta name="keywords" content="" />
+<meta name="description" content="" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title>Gestionnaire de compétences</title>
+<link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet" >
+<link href="style.css" rel="stylesheet" type="text/css" media="screen" />
+<link id="stylePrint" href="stylePrint.css" rel="stylesheet" type="text/css" media="print" />
+
+</head>
+<body onload='loadSkills()'>
+<div id="wrapper">
+	<!-- end #header -->
+	<div id="page">
+		<div id="page-bgtop">
+			<div id="page-bgbtm">
+				<div id="content">
+					<div style="clear: both;">&nbsp;</div>
+				</div>
+				<div id="content">
+					<div style="clear: both;">&nbsp;</div>
+				</div>
+				<div id="content">
+					<div class="post new-kid">
+						<div class="entry" id="skills">
+						</div>
+					</div>
+					<div style="clear: both;">&nbsp;</div>
+				</div>
+				<!-- end #content -->
+
+				<!-- end #sidebar -->
+				<div style="clear: both;">&nbsp;</div>
+			</div>
+		</div>
+	</div>
+	<!-- end #page -->
+</div>
+<!-- end #footer -->
+
+</body>
+</html>
+<script>
+
+function loadSkills()
+{
+	var a = sessionStorage.getItem("sent");
+	document.getElementById('skills').innerHTML = a;
+	document.getElementById("breakin").style.pageBreakAfter = "always";
+	setTimeout(window.print, 3000);
+};
+
+</script>

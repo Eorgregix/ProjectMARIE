@@ -4,9 +4,30 @@ Design by TEMPLATED
 http://templated.co
 Released for free under the Creative Commons Attribution License
 */
-
-
-
+/*
+body {
+  width: auto!important;
+  margin: auto!important;
+  font-family: serif;
+  font-size: 12pt;
+  background-color: #fff!important;
+  color: #000!important;
+}
+p, h1, h2, h3, h4, h5, h6, blockquote, ul, ol {
+  color: #000!important;
+  margin: auto!important;
+}
+.print {
+  display: block;
+}
+*/
+#breakin{
+  page-break-after: always;
+}
+table {
+  page-break-inside: avoid; /* pas de coupure dans ces élements */
+  
+}
 
 div#skill0 text {
     color: #60548c;
@@ -18,7 +39,7 @@ div#skill0 text {
 div#skill0 {
     margin-bottom: 10px;
 }
-
+/*
 
 .post.new-kid table,
 .post.new-skill table {
@@ -56,7 +77,6 @@ button {
 	cursor: pointer;
 	outline: none;
 }
-/*--------------------------------------------------------------*/
 
 body {
 	margin: 0;
@@ -116,7 +136,6 @@ a:hover {
 	background: #fff;
 }
 
-/* Header */
 
 #header-wrapper {
 	height: auto;
@@ -128,7 +147,6 @@ a:hover {
 	padding: 0px 0px 0px 0px;
 }
 
-/* Logo */
 
 #logo {
 	float: left;
@@ -174,7 +192,6 @@ a:hover {
 	color: #707070;
 }
 
-/* Search */
 
 #search {
 	float: right;
@@ -214,7 +231,6 @@ a:hover {
 	color: #FFFFFF;
 }
 
-/* Menu */
 
 #menu {
 	float: right;
@@ -259,7 +275,6 @@ a:hover {
 #menu .current_page_item a {
 }
 
-/* Page */
 
 #page {
 	width: 980px;
@@ -270,7 +285,6 @@ a:hover {
 #page-bgtop {
 	padding: 20px 0px;
 }
-/* Content */
 
 #content {
 	float: right;
@@ -337,7 +351,6 @@ a:hover {
 .links a {
 }
 
-/* Sidebar */
 
 #sidebar {
 	float: left;
@@ -413,7 +426,6 @@ a:hover {
 	color: #847F7E;
 }
 
-/* Calendar */
 
 #calendar {
 }
@@ -434,15 +446,9 @@ a:hover {
 	text-align: right;
 }
 
-/* Footer */
 
 #footer {
 	display: none;
-	/*width: 980px;
-	height: 50px;
-	margin: 0 auto;
-	padding: 0px 0 15px 0;
-	font-family: 'Poppins', Helvetica, sans-serif;*/
 }
 
 /*#footer p {

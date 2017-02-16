@@ -19,7 +19,6 @@ Released   : 20120513
 <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
 <link href="style.css" rel="stylesheet" type="text/css" media="screen" />
 
-
 </head>
 <body>
 
@@ -52,7 +51,7 @@ Released   : 20120513
 				</div>
 				<div id="content">
 					<div class="post">
-						<h2 class="title"><a href="#">Créer une classe</a></h2>
+						<h2 class="title"><a id='createClass' href="#">Créer une classe</a></h2>
 						<div class="entry">
 							<button id="butt"  onclick="createClasse()">Créer</button>
 							<table><tr><td>
@@ -127,7 +126,344 @@ function displayContents(contents) {
   var element = document.getElementById('file-content');
   element.innerHTML = contents;
   general = JSON.parse(contents);
+	//document.getElementById('file-inputClasse').files[0].name = general.studentFile;
+	//document.getElementById('file-inputSkill').files[0].name = general.skillFile;
+	update = true;
+	document.getElementById('createClass').innerHTML = "Mettre à jour une Classe";
+	document.getElementById('butt').innerHTML = "Mettre à jour";
+
   loadClasse(general);
+}
+
+function countDiff(s1, s2) {
+	var diffCount = 0;
+	var diff = s1.length - s2.length;
+	var len = 0;
+	var j = 0;
+	if(diff >= 0)
+	{
+		len = s2.length;
+		diffCount += diff;
+
+		for(var i = 0; i < len; i++)
+		{
+			if(s1[j] != s2[i])
+			{
+				diff -= 1;
+				if(diff <= -1)
+				{
+					j++;
+					i--;
+					diffCount++;
+				}
+				else {
+					i--;
+				}
+			}
+			else
+				j++;
+		}
+	}
+	else {
+		len = s1.length;
+		diff = -diff;
+		diffCount += diff;
+
+		console.log(diffCount);
+		for(var i = 0; i < len; i++)
+		{
+			if(s1[i] != s2[j])
+			{
+				diff -= 1;
+				if(diff <= -1)
+				{
+					j++;
+					i--;
+					diffCount++;
+				}
+				else {
+					i--;
+				}
+			}
+			else
+				j++;
+		}
+	}
+	console.log(diffCount);
+	return diffCount;
+}
+
+function checkStudent() {
+	var diff = classesG.eleve.length - general.eleve.length;
+
+	for(var i = 0; i < general.eleve.length; i++)
+	{
+		var nom = false;
+		var prenom = false;
+
+		if(general.eleve[i].eleve.name == classesG.eleve[i].name)
+			nom = true;
+		else
+			if(countDiff(general.eleve[i].eleve.name, classesG.eleve[i].name) <= 3)
+				nom = true;
+
+		if(general.eleve[i].eleve.prenom == classesG.eleve[i].prenom)
+			prenom = true;
+		else
+			if(countDiff(general.eleve[i].eleve.prenom, classesG.eleve[i].prenom) <= 3)
+				prenom = true;
+
+		if(nom && prenom)
+		{
+			general.eleve[i].eleve = classesG.eleve[i];
+		}
+		else// if (!nom && !prenom)
+		{
+			//new student
+			if(diff >= 0)
+			{
+				console.log("add");
+
+				var newStudent = {
+					eleve:classesG.eleve[i],
+					skillArray:general.skills
+					};
+
+				general.eleve.splice(i, 0, newStudent);
+				diff = classesG.eleve.length - general.eleve.length;
+				i=0;
+			}
+			//delete student
+			else if(diff < 0)
+			{
+				console.log("del");
+				console.log(general.eleve.splice(i, 1));
+				diff = classesG.eleve.length - general.eleve.length;
+				i=0;
+			}
+		}
+		// else
+		// {
+		// 	console.log(nom);
+		// 	console.log(prenom);
+		// }
+	}
+
+	if(diff > 0)
+	{
+		for(var j =general.eleve.length; j < classesG.eleve.length; j++)
+		{
+			console.log("add");
+
+			var newStudent = {
+				eleve:classesG.eleve[j],
+				skillArray:general.skills
+				};
+
+			general.eleve.splice(j, 0, newStudent);
+		}
+	}
+
+	loadClasse(general);
+}
+
+function checkSkill() {
+
+
+	var diff = skillsG.skill.length - general.skills.length;
+	console.log(diff);
+	for(var i = 0; i < general.skills.length; i++)
+	{
+		var nom = false;
+		var matiere = false;
+
+		if(general.skills[i].skill.name == skillsG.skill[i].name)
+			nom = true;
+		else
+			if(countDiff(general.skills[i].skill.name, skillsG.skill[i].name) <= 3)
+				nom = true;
+
+		if(general.skills[i].skill.matiere == skillsG.skill[i].matiere)
+			matiere = true;
+		else
+			if(countDiff(general.skills[i].skill.matiere, skillsG.skill[i].matiere) <= 3)
+				matiere = true;
+
+		if(nom && matiere)
+		{
+			general.skills[i].skill = skillsG.skill[i];
+		}
+		else// if (!nom && !prenom)
+		{
+			//new student
+			if(diff >= 0)
+			{
+				console.log("add");
+
+				var newSkill = {
+					name:skillsG.skill[i].name,
+					type:skillsG.skill[i].type,
+					matiere:skillsG.skill[i].matiere,
+					min:skillsG.skill[i].min,
+					max:skillsG.skill[i].max,
+					defaultVal:skillsG.skill[i].defaultVal,
+					imgPath:skillsG.skill[i].imgPath
+				};
+
+				var newskillEleve = {
+					skill:newSkill,
+					value:"0",
+					photoPath:["none"]
+					};
+
+
+				console.log(newSkill);
+				general.skills.splice(i, 0, newskillEleve);
+				diff = skillsG.skill.length - general.skills.length;
+				i=0;
+			}
+			//delete student
+			else if(diff < 0)
+			{
+				console.log("del");
+				console.log(general.skills.splice(i, 1));
+				diff = skillsG.skill.length - general.skills.length;
+				i=0;
+			}
+		}
+	}
+	if(diff > 0)
+	{
+		for(var j =general.skills.length; j < skillsG.skill.length; j++)
+		{
+			var newSkill = {
+				name:skillsG.skill[j].name,
+				type:skillsG.skill[j].type,
+				matiere:skillsG.skill[j].matiere,
+				min:skillsG.skill[j].min,
+				max:skillsG.skill[j].max,
+				defaultVal:skillsG.skill[j].defaultVal,
+				imgPath:skillsG.skill[j].imgPath
+			};
+
+			var newskillEleve = {
+				skill:newSkill,
+				value:"0",
+				photoPath:["none"]
+				};
+
+
+			console.log(newSkill);
+			general.skills.splice(j, 0, newskillEleve);
+			diff = skillsG.skill.length - general.skills.length;
+		}
+	}
+	dispatchToStudent();
+}
+
+function dispatchToStudent()
+{
+	var diff = general.skills.length - general.eleve[0].skillArray.length;
+	for(var i = 0; i < general.eleve[0].skillArray.length; i++)
+	{
+		//check for the first student
+		var name = false;
+		var matière = false;
+
+		if(general.skills[i].skill.name == general.eleve[0].skillArray[i].skill.name)
+			name = true;
+		else
+			if(countDiff(general.skills[i].skill.name, general.eleve[0].skillArray[i].skill.name) <= 3)
+				name = true;
+
+		if(general.skills[i].skill.matiere == general.eleve[0].skillArray[i].skill.matiere)
+			matiere = true;
+		else
+			if(countDiff(general.skills[i].skill.matiere, general.eleve[0].skillArray[i].skill.matiere) <= 3)
+				matiere = true;
+
+		if(name && matiere)
+		{
+			for(var j =0; j < general.eleve.length; j++)
+			{
+				general.eleve[j].skillArray[i].skill = general.skills[i].skill;
+			}
+
+		}
+		else// if (!nom && !prenom)
+		{
+			//new student
+			if(diff >= 0)
+			{
+				console.log("add");
+
+				var newSkill = {
+					name:general.skills[i].skill.name,
+					type:general.skills[i].skill.type,
+					matiere:general.skills[i].skill.matiere,
+					min:general.skills[i].skill.min,
+					max:general.skills[i].skill.max,
+					defaultVal:general.skills[i].skill.defaultVal,
+					imgPath:general.skills[i].skill.imgPath
+				};
+
+				var newskillEleve = {
+					skill:newSkill,
+					value:general.skills[i].skill.defaultVal.toString(),
+					photoPath:["none"]
+					};
+
+
+				console.log(newSkill);
+				for(var j =0; j < general.eleve.length; j++)
+				{
+					general.eleve[j].skillArray.splice(i, 0, newskillEleve);
+				}
+				diff = general.skills.length - general.eleve[0].skillArray.length;
+				i=0;
+			}
+			//delete student
+			else if(diff < 0)
+			{
+				console.log("del");
+				for(var j =0; j < general.eleve.length; j++)
+				{
+					console.log(general.eleve[j].skillArray.splice(i, 1));
+				}
+				diff = general.skills.length - general.eleve[0].skillArray.length;
+				i=0;
+			}
+		}
+	}
+	if(diff > 0)
+	{
+		for(var j =general.eleve[0].skillArray.length; j < general.skills.length; j++)
+		{
+			var newSkill = {
+				name:general.skills[j].skill.name,
+				type:general.skills[j].skill.type,
+				matiere:general.skills[j].skill.matiere,
+				min:general.skills[j].skill.min,
+				max:general.skills[j].skill.max,
+				defaultVal:general.skills[j].skill.defaultVal,
+				imgPath:general.skills[j].skill.imgPath
+			};
+
+			var newskillEleve = {
+				skill:newSkill,
+				value:general.skills[j].skill.defaultVal.toString(),
+				photoPath:["none"]
+				};
+
+
+			console.log(newSkill);
+			for(var k =0; k < general.eleve.length; k++)
+			{
+				general.eleve[k].skillArray.splice(k, 0, newskillEleve);
+			}
+			diff = skillsG.skill.length - general.skills.length;
+		}
+	}
 }
 
 function displayContentsClasse(contents) {
@@ -135,9 +471,15 @@ function displayContentsClasse(contents) {
   element.innerHTML = contents;
   classesG = JSON.parse(contents);
   eleveCount = classesG.eleve.length;
-
-	document.getElementById('file-inputSkill').style = "";
-	document.getElementById('skillText').style = "";
+	if(update == false) {
+		general.studentFile = "./Eleves/"+document.getElementById('file-inputClasse').files[0].name;
+		document.getElementById('file-inputSkill').style = "";
+		document.getElementById('skillText').style = "";
+	}
+	else{
+		console.log("checkStudent");
+		checkStudent();
+	}
 }
 
 function displayContentsSkill(contents) {
@@ -145,24 +487,30 @@ function displayContentsSkill(contents) {
   element.innerHTML = contents;
   skillsG = JSON.parse(contents);
   skillCount = skillsG.skill.length;
-
-  for(var i = 0; i < skillCount; i++) {
-  	var skill = {
-  		skill:JSON.parse(JSON.stringify(skillsG.skill[i])),
-  		value:skillsG.skill[i].defaultVal,
-  		photoPath:["none"]
-  	};
-  	skillArray[i] = skill;
-  }
-
-  for(var i = 0; i < eleveCount; i++) {
-  	var eleve = {
-  		eleve:JSON.parse(JSON.stringify(classesG.eleve[i])),
-  		skillArray:JSON.parse(JSON.stringify(skillArray))
-  	};
-  	general.eleve[i] = eleve;
-  }
+	if(update == false) {
+		general.skillFile = "./Competences/"+document.getElementById('file-inputSkill').files[0].name;
+	  for(var i = 0; i < skillCount; i++) {
+	  	var skill = {
+	  		skill:JSON.parse(JSON.stringify(skillsG.skill[i])),
+	  		value:skillsG.skill[i].defaultVal,
+	  		photoPath:["none"]
+	  	};
+	  	skillArray[i] = skill;
+	  }
+		general.skills = JSON.parse(JSON.stringify(skillArray));
+	  for(var i = 0; i < eleveCount; i++) {
+	  	var eleve = {
+	  		eleve:JSON.parse(JSON.stringify(classesG.eleve[i])),
+	  		skillArray:JSON.parse(JSON.stringify(skillArray))
+	  	};
+	  	general.eleve[i] = eleve;
+  	}
   loadClasse(general);
+	}
+	else{
+		console.log("checkSkill");
+		checkSkill();
+	}
 }
 
 document.getElementById('file-input')
@@ -192,6 +540,9 @@ var genEleve = {
 var skillEleve = {
 	skill:genSkill,
 	value:"0",
+	fail:false,
+	almost:false,
+	succeed:false,
 	photoPath:["none"]
 	};
 
@@ -205,8 +556,9 @@ var skillArray = [skillEleve];
 var skillsG = {classe:"Classe", skill:[genSkill]};
 var classesG = {classe:"Classe", eleve:[genEleve]};
 
-var general = {classe:"Classe", eleve:[genClasse]};
+var general = {classe:"Classe", skills:[skillEleve], eleve:[genClasse]};
 
+var update = false;
 var skillCount = 1;
 var eleveCount = 1;
 
@@ -214,6 +566,10 @@ function createClasse() {
 	document.getElementById('butt').style = "display:none";
 	document.getElementById('classeText').style = "";
 	document.getElementById('file-inputClasse').style = "";
+	if(update == true){
+		document.getElementById('skillText').style = "";
+		document.getElementById('file-inputSkill').style = "";
+	}
 }
 
 function createSkill() {
@@ -227,7 +583,13 @@ function loadClasse(skillArray) {
 	var skillDiv = document.getElementById("skills");
 	//skillArray is empty so we fill with default value and will create a new json
 	var result ="";
-	result = "<div id='skill0' >"+ addTextInput("classe", "Classe" , skillArray.classe) +"</div>";
+
+	result += "<form >";
+	result += "<input id=\"checkSize\" type=\"checkbox\" name=\"checkSize\" value=\"CheckSize\"";
+	result += " checked ";
+	result += "> Demander la taille des images avant impression <br></form>";
+
+	result += "<div id='skill0' >"+ addTextInput("classe", "Classe" , skillArray.classe) +"</div>";
 	result += "<table><tr>";
 	var colCount = 0;
 	for(var i = 0; i < general.eleve.length; i++)
@@ -259,7 +621,7 @@ function loadEleve(skillArray, eleve, matiere) {
 	{
 		if(general.eleve[eleve].skillArray[i].skill.matiere == matiere) {
 			result += "<table><tr><td>";
-			result += addSkill(i,eleve, matiere, skillArray.eleve[eleve].skillArray[i].skill.name, skillArray.eleve[eleve].skillArray[i].skill.type, skillArray.eleve[eleve].skillArray[i].skill.imgPath, skillArray.eleve[eleve].skillArray[i].value, skillArray.eleve[eleve].skillArray[i].photoPath);
+			result += addSkill(i,eleve, matiere, skillArray.eleve[eleve].skillArray[i]);
 			result += "</td></tr></table>";
 		}
 	}
@@ -267,6 +629,133 @@ function loadEleve(skillArray, eleve, matiere) {
 	result += "<p class='links'><a onclick='loadClasse(general)'>Retour Classe</a>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a onclick='save()'>Sauvegarder</a></p>";
 	skillDiv.innerHTML = result;
 
+}
+
+function AddCheckBoxPrint(eleve, count, fail, almost, succeed)
+{
+	 var ret = "<form >";
+	 ret += "<input id=\"fail_"+eleve+"_"+count+"\" type=\"checkbox\" name=\"fail\" value=\"fail\"";
+	 if(fail)
+	 	ret += " checked ";
+	 ret += "> Ne réussit pas encore <br>";
+
+	 ret += "<input id=\"almost_"+eleve+"_"+count+"\" type=\"checkbox\"  name=\"fail\" value=\"almost\"";
+	 if(almost)
+	 	ret += " checked ";
+	 ret += "> Est en voie de réussite <br>";
+
+	 ret += "<input id=\"succeed_"+eleve+"_"+count+"\" type=\"checkbox\" name=\"fail\" value=\"succeed\"";
+	 if(succeed)
+	 	ret += " checked ";
+	 ret += "> Réussit souvent <br>";
+
+	 ret += "</form>";
+	 return ret;
+}
+
+	var w , h;
+	w = h = 150;
+function addSkillPrint(count,eleve, matiere, skill) {
+
+	ret = "</br></br>";
+	ret += "<table><tr>";
+	//ret += "<td width='200'>";
+	ret += addText(skill.skill.name);
+	if(skill.skill.type != "Type")
+		ret += addText(skill.skill.type);
+	ret += "<br></tr><tr>";
+	ret += addNoClickableImgPrint(count, "img"+count, skill.skill.imgPath, w, h);
+
+	var photoCount = 0;
+	var boxes = false;
+	for(var i = 0; i < skill.photoPath.length; i++) {
+		if(photoCount == 3)
+		{
+			if(boxes == false && skill.photoPath.length > 3)
+			{
+				ret += "</tr><tr><td>" + AddCheckBoxPrint(eleve, count, skill.fail, skill.almost, skill.succeed) + "</td>";
+				boxes = true;
+			}
+			else
+				ret += "</tr><tr><td><text><text></td>";
+			photoCount = 0;
+		}
+		if( skill.photoPath[i] != "none")
+			ret += addNoClickableImgPrint(count, "photo"+i+count, skill.photoPath[i], w, h);
+		photoCount++;
+	}
+
+	ret += "</tr><td>";
+	// ret += addText("Valeur :");
+	// ret += addText(skill.value);
+	if(boxes == false)
+		ret += AddCheckBoxPrint(eleve, count, skill.fail, skill.almost, skill.succeed);
+	// //ret += "</td><td>";
+	// ret += "<button align='right' id='minusButton"+count+"' data-skill="+count+" data-matiere=\""+matiere+"\" onclick='minus("+eleve+", this.dataset.skill, this.dataset.matiere)'> - </button><button  align='right' id='plusButton"+count+"' data-skill="+count+" data-matiere=\""+matiere+"\"  onclick='plus("+eleve+", this.dataset.skill, this.dataset.matiere)'> + </button>";
+
+	ret += "</tr>";
+
+
+
+	ret += "</table>"
+	return ret;
+}
+
+function loadPrint(skillArray, eleve) {
+	if(document.getElementById('checkSize').checked == true)
+	{
+		var size = prompt("Entrez une taille pour les images (150 par defaut) :", "150");
+		if (size != null) {
+				w = h = parseInt(size);
+		}
+	}
+
+	//skillArray is empty so we fill with default value and will create a new json
+	var result ="";
+
+	var matiere = [];
+	var matInside = false;
+	for(var i = 0; i < general.eleve[eleve].skillArray.length; i++)
+	{
+		for(var j = 0; j < matiere.length; j++) {
+			if(matiere[j] == general.eleve[eleve].skillArray[i].skill.matiere) {
+				matInside = true;
+			}
+		}
+
+		if(!matInside) {
+			matiere.push(general.eleve[eleve].skillArray[i].skill.matiere);
+		}
+		matInside = false;
+	}
+
+
+
+	result = "<div id='skill0' >"+ addText(skillArray.eleve[eleve].eleve.prenom) + " " + addText(skillArray.eleve[eleve].eleve.name) +"</br> <img src=\""+skillArray.eleve[eleve].eleve.imgPath+"\" width='75' height'75'/></br></br></br>";
+	for(var j = 0; j < matiere.length; j++)
+	{
+		if(j != 0)
+			result += "<p id='breakin'> </p>";
+		result += "<h1>"+matiere[j] + "</h1></br>";
+		for(var i = 0; i < general.eleve[eleve].skillArray.length; i++)
+		{
+			if(general.eleve[eleve].skillArray[i].skill.matiere == matiere[j])
+			{
+				result += "<table><tr><td>";
+				result += addSkillPrint(i,eleve, matiere, skillArray.eleve[eleve].skillArray[i]);
+				result += "</td></tr></table>";
+			}
+		}
+	}
+	printThing(result);
+
+}
+
+function printThing(s)
+{
+  sessionStorage.setItem("sent", s);
+
+	var w = window.open("./printPage.html");
 }
 
 function loadMatiere(skillArray, eleve) {
@@ -284,14 +773,15 @@ function loadMatiere(skillArray, eleve) {
 				matInside = true;
 			}
 		}
+
 		if(!matInside) {
 			matiere.push(general.eleve[eleve].skillArray[i].skill.matiere);
 			result += "<table><tr><td>";
 			result += "<button id='buttMatiere"+i+"' data-eleve=\""+matiere[matiere.length-1]+"\" onclick='loadEleve(general, "+eleve+", this.dataset.eleve);'>"+matiere[matiere.length-1]+"</button>";
 			result += "</td></tr></table>";
 		}
+		matInside = false;
 	}
-
 	result += "</br><p class='links'><a onclick='loadClasse(general)''>Retour Classe</a>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a onclick='save()'>Sauvegarder</a></p>";
 	skillDiv.innerHTML = result;
 
@@ -339,36 +829,77 @@ function addEleve(count, name, prenom, img) {
 	ret += addClickableImg(count, "img"+count, img);
 	ret += "</tr>";
 	ret += "</table>"
+	ret += "<p class='links'><a onclick='loadPrint(general, "+count+")'>Imprimer</a></p>";
 	return ret;
 }
 
-function addSkill(count,eleve, matiere, name, type, img, value, photo) {
+function addSkill(count,eleve, matiere, skill) {
 	ret = "<table style='box-shadow: 0px 2px 10px #8e8e8e; padding: 15px;'><tr>";
 	//ret += "<td width='200'>";
-	ret += addText(name);
-	ret += addText(type);
+	ret += addText(skill.skill.name);
+	ret += addText(skill.skill.type);
 	ret += "</tr><tr>";
-	ret += addNoClickableImg(count, "img"+count, img);
+	ret += addNoClickableImg(count, "img"+count, skill.skill.imgPath);
 
 	var photoCount = 0;
-	for(var i = 0; i < photo.length; i++) {
+	for(var i = 0; i < skill.photoPath.length; i++) {
 		if(photoCount == 3)
 		{
 			ret += "</tr><tr><td><text><text></td>"
 			photoCount = 0;
 		}
-		ret += addImg(matiere, "photo"+i+count, i, "", photo[i], eleve, count);
+		ret += addImg(matiere, "photo"+i+count, i, "", skill.photoPath[i], eleve, count);
 		photoCount++;
 	}
 
 	ret += "</tr><td>";
 	ret += addText("Valeur :");
-	ret += addText(value);
+	ret += addText(skill.value);
 	//ret += "</td><td>";
 	ret += "<button align='right' id='minusButton"+count+"' data-skill="+count+" data-matiere=\""+matiere+"\" onclick='minus("+eleve+", this.dataset.skill, this.dataset.matiere)'> - </button><button  align='right' id='plusButton"+count+"' data-skill="+count+" data-matiere=\""+matiere+"\"  onclick='plus("+eleve+", this.dataset.skill, this.dataset.matiere)'> + </button>";
+	ret += AddCheckBox(eleve, count, matiere, skill.fail, skill.almost, skill.succeed);
 	ret += "</tr>";
+
+
+
 	ret += "</table>"
 	return ret;
+}
+
+function AddCheckBox(eleve, count, matiere, fail, almost, succeed)
+{
+	 var ret = "<form >";
+	 ret += "<input id=\"fail_"+eleve+"_"+count+"\" type=\"checkbox\" data-matiere=\""+matiere+"\" name=\"fail\" onclick=\"succeedBox("+eleve+", "+count+", this)\" value=\"fail\"";
+	 if(fail)
+	 	ret += " checked ";
+	 ret += "> Ne réussit pas encore <br>";
+
+	 ret += "<input id=\"almost_"+eleve+"_"+count+"\" type=\"checkbox\" data-matiere=\""+matiere+"\" name=\"fail\" onclick=\"succeedBox("+eleve+", "+count+", this)\" value=\"almost\"";
+	 if(almost)
+	 	ret += " checked ";
+	 ret += "> Est en voie de réussite <br>";
+
+	 ret += "<input id=\"succeed_"+eleve+"_"+count+"\" type=\"checkbox\" data-matiere=\""+matiere+"\" name=\"fail\" onclick=\"succeedBox("+eleve+", "+count+", this)\" value=\"succeed\"";
+	 if(succeed)
+	 	ret += " checked ";
+	 ret += "> Réussit souvent <br>";
+
+	 ret += "</form>";
+	 return ret;
+}
+
+function succeedBox(eleve, count, input)
+{
+	if(input.value == "fail")
+		general.eleve[eleve].skillArray[count].fail = input.checked;
+
+	if(input.value == "almost")
+		general.eleve[eleve].skillArray[count].almost = input.checked;
+
+	if(input.value == "succeed")
+		general.eleve[eleve].skillArray[count].succeed = input.checked;
+
+	loadEleve(general, eleve, input.dataset.matiere);
 }
 
 function minus(eleve, sCount, matiere) {
@@ -389,6 +920,13 @@ function plus(eleve, sCount, matiere) {
 		nb = max;
 	general.eleve[eleve].skillArray[sCount].value = nb.toString();
 	loadEleve(general, eleve, matiere);
+}
+
+function addNoClickableImgPrint(count, id, path, w, h)
+{
+	var ret = "<td><img id='"+id+"' width='"+w+"' height='"+h+"' src=\""+path+"\"/></td>";
+
+	return ret;
 }
 
 function addNoClickableImg(count, id, path)
@@ -419,14 +957,14 @@ function addTextInput(id, title, content) {
 
 function addImg(matiere, id, num, title, content, eleve, skill) {
 
-	var ret = "<td id='td"+id+"'>";
+	var ret = "<td width='210' id='td"+id+"'>";
 	if (content == undefined || content == "none")
 	{
 		ret += "<input type='file' data-matiere=\""+matiere+"\" data-num="+num+" data-id=\""+id+"\" data-eleve="+eleve+" data-skill="+skill+" onchange='readURL(this, this.dataset.matiere, this.dataset.num, this.dataset.id, this.dataset.eleve, this.dataset.skill);' /></td>";
 	}
 	else
 	{
-		ret += "<img id='"+id+"' width='300' height='300' src=\""+content+"\" data-matiere=\""+matiere+"\" onclick='resetIMG ("+eleve+", "+skill+", this.dataset.matiere, "+num+")'/></td>";
+		ret += "<img id='"+id+"' width='200' height='200' src=\""+content+"\" data-matiere=\""+matiere+"\" onclick='resetIMG ("+eleve+", "+skill+", this.dataset.matiere, "+num+")'/></td>";
 	}
 
 	return ret;
@@ -438,7 +976,7 @@ function readURL(input, matiere, num, id, eleve, skill) {
 
 		general.eleve[eleve].skillArray[skill].photoPath[num] = "./photo/"+input.files[0].name;
         reader.onload = function (e) {
-            document.getElementById("td"+id).innerHTML = "<img id='photo"+id+"' width='300' height='300' src=\"./photo/"+input.files[0].name+"\" data-matiere=\""+matiere+"\" onclick='resetIMG ("+eleve+", "+skill+", this.dataset.matiere, "+num+")'/></td>";
+            document.getElementById("td"+id).innerHTML = "<img id='photo"+id+"' width='200' height='200' src=\"./photo/"+input.files[0].name+"\" data-matiere=\""+matiere+"\" onclick='resetIMG ("+eleve+", "+skill+", this.dataset.matiere, "+num+")'/></td>";
 						var none = false;
 						for(var i = 0; i < general.eleve[eleve].skillArray[skill].photoPath.length; i++)
 						{
