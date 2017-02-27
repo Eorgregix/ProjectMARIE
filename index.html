@@ -655,15 +655,19 @@ function AddCheckBoxPrint(eleve, count, fail, almost, succeed)
 
 	var w , h;
 	w = h = 150;
+
+
+var color = ["Red", "Blue", "Green", "Gold", "Olive", "Purple", "Pink", "Cyan", "Black", "Orange"];
+
 function addSkillPrint(count,eleve, matiere, skill) {
 
 	ret = "</br></br>";
 	ret += "<table><tr>";
 	//ret += "<td width='200'>";
-	ret += addText(skill.skill.name);
+	ret += "<i><u>" + addText(skill.skill.name)+"</u>";
 	if(skill.skill.type != "Type")
 		ret += addText(skill.skill.type);
-	ret += "<br></tr><tr>";
+	ret += "</i><br></tr><tr>";
 	ret += addNoClickableImgPrint(count, "img"+count, skill.skill.imgPath, w, h);
 
 	var photoCount = 0;
@@ -701,6 +705,8 @@ function addSkillPrint(count,eleve, matiere, skill) {
 	return ret;
 }
 
+
+
 function loadPrint(skillArray, eleve) {
 	if(document.getElementById('checkSize').checked == true)
 	{
@@ -712,7 +718,8 @@ function loadPrint(skillArray, eleve) {
 
 	//skillArray is empty so we fill with default value and will create a new json
 	var result ="";
-
+	var cam = [];
+	var valueSucceed = 2, valueAlmost = 1, valueFail = 0;
 	var matiere = [];
 	var matInside = false;
 	for(var i = 0; i < general.eleve[eleve].skillArray.length; i++)
@@ -731,12 +738,16 @@ function loadPrint(skillArray, eleve) {
 
 
 
-	result = "<div id='skill0' >"+ addText(skillArray.eleve[eleve].eleve.prenom) + " " + addText(skillArray.eleve[eleve].eleve.name) +"</br> <img src=\""+skillArray.eleve[eleve].eleve.imgPath+"\" width='75' height'75'/></br></br></br>";
+	result += "<div id='skill0' >"+ addText(skillArray.eleve[eleve].eleve.prenom) + " " + addText(skillArray.eleve[eleve].eleve.name) +"</br> <img src=\""+skillArray.eleve[eleve].eleve.imgPath+"\" width='75' height'75'/></br></br></br>";
+
+	result += "<h2>Résumé</h2>";
+	result += "<canvas id=\"camembert\" width=\"900\" height=\"400\"></canvas>";
+
 	for(var j = 0; j < matiere.length; j++)
 	{
 		if(j != 0)
 			result += "<p id='breakin'> </p>";
-		result += "<h1>"+matiere[j] + "</h1></br>";
+		result += "<h1 style=\"color:"+color[j]+"\">"+matiere[j] + "</h1></br>";
 		for(var i = 0; i < general.eleve[eleve].skillArray.length; i++)
 		{
 			if(general.eleve[eleve].skillArray[i].skill.matiere == matiere[j])
@@ -747,13 +758,44 @@ function loadPrint(skillArray, eleve) {
 			}
 		}
 	}
-	printThing(result);
+
+	for(var j = 0; j < matiere.length; j++)
+	{
+		if(cam[j] == undefined)
+			cam.push(0);
+		for(var i = 0; i < general.eleve[eleve].skillArray.length; i++)
+		{
+			if(matiere[j] == general.eleve[eleve].skillArray[i].skill.matiere)
+			{
+				if(general.eleve[eleve].skillArray[i].succeed)
+				 	cam[j] += valueSucceed;
+				if(general.eleve[eleve].skillArray[i].almost)
+				 	cam[j] += valueAlmost;
+				if(general.eleve[eleve].skillArray[i].fail)
+					cam[j] += valueFail;
+			}
+		}
+	}
+	var max = 0;
+
+	for(var j = 0; j < cam.length; j++)
+		max += cam[j];
+
+	for(var j = 0; j < cam.length; j++)
+		cam[j] = cam[j]/max * 100;
+
+	//graphe_camembert(cam, color, matiere);
+
+	printThing(result, cam, color, matiere);
 
 }
 
-function printThing(s)
+function printThing(s, donnees, colors, legende)
 {
   sessionStorage.setItem("sent", s);
+	sessionStorage.setItem("donnes", donnees);
+	sessionStorage.setItem("colors", colors);
+	sessionStorage.setItem("legende", legende);
 
 	var w = window.open("./printPage.html");
 }
@@ -764,8 +806,12 @@ function loadMatiere(skillArray, eleve) {
 	//skillArray is empty so we fill with default value and will create a new json
 	//skillDiv.innerHTML = "<div id='skill0' >"+ addText(skillArray.eleve[eleve].eleve.prenom) + " "+ skillArray.eleve[eleve].eleve.name +"</br> <img src'"+skillArray.eleve[eleve].eleve.imgPath+"' width='75' height'75'/></div>";
 	var matiere = [];
+	var cam = [];
+	var valueSucceed = 2, valueAlmost = 1, valueFail = 0;
 	var matInside = false;
 	var result = "";
+	result += "<h2>Résumé</h2>";
+	result += "<canvas id=\"camembert\" width=\"900\" height=\"400\"></canvas>";
 	for(var i = 0; i < general.eleve[eleve].skillArray.length; i++)
 	{
 		for(var j = 0; j < matiere.length; j++) {
@@ -785,6 +831,92 @@ function loadMatiere(skillArray, eleve) {
 	result += "</br><p class='links'><a onclick='loadClasse(general)''>Retour Classe</a>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a onclick='save()'>Sauvegarder</a></p>";
 	skillDiv.innerHTML = result;
 
+	for(var j = 0; j < matiere.length; j++)
+	{
+		if(cam[j] == undefined)
+			cam.push(0);
+		for(var i = 0; i < general.eleve[eleve].skillArray.length; i++)
+		{
+			if(matiere[j] == general.eleve[eleve].skillArray[i].skill.matiere)
+			{
+				if(general.eleve[eleve].skillArray[i].succeed)
+				 	cam[j] += valueSucceed;
+				if(general.eleve[eleve].skillArray[i].almost)
+				 	cam[j] += valueAlmost;
+				if(general.eleve[eleve].skillArray[i].fail)
+					cam[j] += valueFail;
+			}
+		}
+	}
+	var max = 0;
+
+	for(var j = 0; j < cam.length; j++)
+		max += cam[j];
+
+	for(var j = 0; j < cam.length; j++)
+		cam[j] = cam[j]/max * 100;
+
+	graphe_camembert(cam, color, matiere);
+	//console.log(cam);
+}
+
+function graphe_camembert(donnees, stylecolors, legendes) {
+
+	var canvas = document.getElementById('camembert');
+	var context = canvas.getContext('2d');
+
+	// donnees en pourcentage
+	//var donnees = [1,4,11,21,37,26];
+
+	var diametre = Math.min(canvas.height, canvas.width) - 100;
+	var rayon = diametre / 2;
+
+	// position du centre du camembert
+	var position_x = rayon + 20;
+	var position_y = canvas.height / 2 + 20;
+
+	var nb_donnees = donnees.length;
+	var angle_initial = 0;
+	//var stylecolors = ['fuchsia', 'orange', 'tan', 'rgb(0,0,255)', 'rgb(0,255,0)', 'rgb(255,0,0)'];
+
+	var largeur_rect = 15;
+	//var legendes = ['10 minutes','30 minutes','50 minutes','60 minutes','90 minutes','120 minutes'];
+
+	for(var i=0;i<nb_donnees; i++) {
+		var angles_degre = (donnees[i] / 100) * 360;// conversion pourcentage -> angle en degré
+		DessinerAngle(context,position_x,position_y,rayon,angle_initial,angles_degre,stylecolors[i]);
+		angle_initial += angles_degre;
+
+		DessinerRectangle(
+			context,
+			diametre + 30,
+			(largeur_rect + 3) * (i + 1),
+			largeur_rect,largeur_rect,
+			stylecolors[i]
+		);
+		context.font = '9pt Tahoma';//legendes
+		context.fillStyle = '#000';//legendes
+		context.fillText(legendes[i] ,diametre + 55,18 * i+30);//legendes
+	}
+	//context.fillText('La semaine',diametre+50,150);
+}
+// petit rectangle pour la légende
+function DessinerRectangle(context,x0,y0,xl,yl,coloration) {
+	context.beginPath();
+	context.fillStyle = coloration;
+	context.fillRect(x0,y0,xl,yl);
+	context.closePath();
+	context.fill();
+}
+function DessinerAngle(context,position_x,position_y,rayon,angle_initial,angles_degre,couleurs) {
+	context.beginPath();
+	context.fillStyle  = couleurs;
+	var angle_initial_radian = angle_initial / (180 / Math.PI);// conversion angle en degré -> angle en radian
+	var angles_radian = angles_degre / (180 / Math.PI);// conversion angle en degré -> angle en radian
+	context.arc(position_x,position_y,rayon,angle_initial_radian,angle_initial_radian + angles_radian,0);
+	context.lineTo(position_x, position_y);
+	context.closePath();
+	context.fill();
 }
 
 function addCount() {
