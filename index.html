@@ -615,7 +615,7 @@ function loadEleve(skillArray, eleve, matiere) {
 	var result ="";
 
 	result = "<div id='skill0' >"+ addText(skillArray.eleve[eleve].eleve.prenom) + " "+ addText(skillArray.eleve[eleve].eleve.name) +"</br> <img src=\""+skillArray.eleve[eleve].eleve.imgPath+"\" width='75' height'75'/></br></br></br>";
-	result += "<p class='links'><a onclick='loadClasse(general)'>Retour Classe</a>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a onclick='save()'>Sauvegarder</a></p></br></br></br></br></br></div>";
+	result += "<p class='links'><a onclick='loadClasse(general)'>Retour Classe</a>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a onclick='loadMatiere(general, "+eleve+")'>Retour Matière</a>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a onclick='save()'>Sauvegarder</a></p></br></br></br></br></br></div>";
 
 	for(var i = 0; i < general.eleve[eleve].skillArray.length; i++)
 	{
@@ -626,7 +626,7 @@ function loadEleve(skillArray, eleve, matiere) {
 		}
 	}
 
-	result += "<p class='links'><a onclick='loadClasse(general)'>Retour Classe</a>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a onclick='save()'>Sauvegarder</a></p>";
+	result += "<p class='links'><a onclick='loadClasse(general)'>Retour Classe</a>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a onclick='loadMatiere(general, "+eleve+")'>Retour Matière</a>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a onclick='save()'>Sauvegarder</a></p>";
 	skillDiv.innerHTML = result;
 
 }
@@ -786,16 +786,16 @@ function loadPrint(skillArray, eleve) {
 
 	//graphe_camembert(cam, color, matiere);
 
-	printThing(result, cam, color, matiere);
+	printThing(result, cam, color, matière);
 
 }
 
 function printThing(s, donnees, colors, legende)
 {
   sessionStorage.setItem("sent", s);
-	sessionStorage.setItem("donnes", donnees);
-	sessionStorage.setItem("colors", colors);
-	sessionStorage.setItem("legende", legende);
+	sessionStorage.setItem("donnes", s);
+	sessionStorage.setItem("colors", s);
+	sessionStorage.setItem("sent", s);
 
 	var w = window.open("./printPage.html");
 }
