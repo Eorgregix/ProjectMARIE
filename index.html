@@ -786,16 +786,16 @@ function loadPrint(skillArray, eleve) {
 
 	//graphe_camembert(cam, color, matiere);
 
-	printThing(result, cam, color, matière);
+	printThing(result, cam, color, matiere);
 
 }
 
 function printThing(s, donnees, colors, legende)
 {
   sessionStorage.setItem("sent", s);
-	sessionStorage.setItem("donnes", s);
-	sessionStorage.setItem("colors", s);
-	sessionStorage.setItem("sent", s);
+	sessionStorage.setItem("donnes", donnees);
+	sessionStorage.setItem("colors", colors);
+	sessionStorage.setItem("legende", legende);
 
 	var w = window.open("./printPage.html");
 }
