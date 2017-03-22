@@ -540,6 +540,8 @@ var genEleve = {
 var skillEleve = {
 	skill:genSkill,
 	value:"0",
+	worked:false,
+	evaluated:false,
 	fail:false,
 	almost:false,
 	succeed:false,
@@ -631,9 +633,33 @@ function loadEleve(skillArray, eleve, matiere) {
 
 }
 
-function AddCheckBoxPrint(eleve, count, fail, almost, succeed)
+function AddCheckBoxPrint(eleve, count, worked, evaluated, fail, almost, succeed)
 {
 	 var ret = "<form >";
+
+	 if(worked == undefined)
+ 	{
+ 		general.eleve[eleve].skillArray[count].worked = false;
+ 		worked = false;
+ 	}
+
+
+ 	if(evaluated == undefined)
+ 	{
+ 		general.eleve[eleve].skillArray[count].evaluated = false;
+ 		evaluated = false;
+ 	}
+
+	 ret += "<input id=\"worked_"+eleve+"_"+count+"\" type=\"checkbox\" name=\"worked\" value=\"worked\"";
+	 if(worked)
+	 	ret += " checked ";
+	 ret += "> Non travaillée <br>";
+
+	 ret += "<input id=\"evaluated_"+eleve+"_"+count+"\" type=\"checkbox\" name=\"evaluated\" value=\"evaluated\"";
+	 if(evaluated)
+	  ret += " checked ";
+	 ret += "> Non évaluée <br>";
+
 	 ret += "<input id=\"fail_"+eleve+"_"+count+"\" type=\"checkbox\" name=\"fail\" value=\"fail\"";
 	 if(fail)
 	 	ret += " checked ";
@@ -989,7 +1015,7 @@ function addSkill(count,eleve, matiere, skill) {
 	ret += addText(skill.value);
 	//ret += "</td><td>";
 	ret += "<button align='right' id='minusButton"+count+"' data-skill="+count+" data-matiere=\""+matiere+"\" onclick='minus("+eleve+", this.dataset.skill, this.dataset.matiere)'> - </button><button  align='right' id='plusButton"+count+"' data-skill="+count+" data-matiere=\""+matiere+"\"  onclick='plus("+eleve+", this.dataset.skill, this.dataset.matiere)'> + </button>";
-	ret += AddCheckBox(eleve, count, matiere, skill.fail, skill.almost, skill.succeed);
+	ret += AddCheckBox(eleve, count, matiere, skill.worked, skill.evaluated, skill.fail, skill.almost, skill.succeed);
 	ret += "</tr>";
 
 
@@ -998,9 +1024,34 @@ function addSkill(count,eleve, matiere, skill) {
 	return ret;
 }
 
-function AddCheckBox(eleve, count, matiere, fail, almost, succeed)
+function AddCheckBox(eleve, count, matiere, worked, evaluated, fail, almost, succeed)
 {
-	 var ret = "<form >";
+	var ret = "<form >";
+
+	if(worked == undefined)
+	{
+		general.eleve[eleve].skillArray[count].worked = false;
+		worked = false;
+	}
+
+
+	if(evaluated == undefined)
+	{
+		general.eleve[eleve].skillArray[count].evaluated = false;
+		evaluated = false;
+	}
+
+
+	 ret += "<input id=\"worked_"+eleve+"_"+count+"\" type=\"checkbox\" data-matiere=\""+matiere+"\" name=\"worked\" onclick=\"succeedBox("+eleve+", "+count+", this)\" value=\"worked\"";
+	 if(worked)
+	 	ret += " checked ";
+	 ret += "> Non travaillée <br>";
+
+	 ret += "<input id=\"evaluated_"+eleve+"_"+count+"\" type=\"checkbox\" data-matiere=\""+matiere+"\" name=\"evaluated\" onclick=\"succeedBox("+eleve+", "+count+", this)\" value=\"evaluated\"";
+	 if(evaluated)
+	  ret += " checked ";
+	 ret += "> Non évaluée <br>";
+
 	 ret += "<input id=\"fail_"+eleve+"_"+count+"\" type=\"checkbox\" data-matiere=\""+matiere+"\" name=\"fail\" onclick=\"succeedBox("+eleve+", "+count+", this)\" value=\"fail\"";
 	 if(fail)
 	 	ret += " checked ";
@@ -1030,6 +1081,12 @@ function succeedBox(eleve, count, input)
 
 	if(input.value == "succeed")
 		general.eleve[eleve].skillArray[count].succeed = input.checked;
+
+	if(input.value == "worked")
+			general.eleve[eleve].skillArray[count].worked = input.checked;
+
+	if(input.value == "evaluated")
+				general.eleve[eleve].skillArray[count].evaluated = input.checked;
 
 	loadEleve(general, eleve, input.dataset.matiere);
 }
