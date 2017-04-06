@@ -719,7 +719,7 @@ function addSkillPrint(count,eleve, matiere, skill) {
 	// ret += addText("Valeur :");
 	// ret += addText(skill.value);
 	if(boxes == false)
-		ret += AddCheckBoxPrint(eleve, count, skill.fail, skill.almost, skill.succeed);
+		ret += AddCheckBoxPrint(eleve, count,skill.worked, skill.evaluated, skill.fail, skill.almost, skill.succeed);
 	// //ret += "</td><td>";
 	// ret += "<button align='right' id='minusButton"+count+"' data-skill="+count+" data-matiere=\""+matiere+"\" onclick='minus("+eleve+", this.dataset.skill, this.dataset.matiere)'> - </button><button  align='right' id='plusButton"+count+"' data-skill="+count+" data-matiere=\""+matiere+"\"  onclick='plus("+eleve+", this.dataset.skill, this.dataset.matiere)'> + </button>";
 
