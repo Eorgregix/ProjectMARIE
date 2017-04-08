@@ -83,11 +83,27 @@ Released   : 20120513
 <!-- end #footer -->
 
 <script>
+
+function clone(obj) {
+    if (null == obj || "object" != typeof obj) return obj;
+    var copy = obj.constructor();
+    for (var attr in obj) {
+        if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
+    }
+    return copy;
+}
+
+//function that handle the reading of the ClasseFile.json
   function readSingleFile(e) {
+
   var file = e.target.files[0];
+
+	//end function if no file name
   if (!file) {
     return;
   }
+
+	//define what to do after loading the file, in this case call displayContents()
   var reader = new FileReader();
   reader.onload = function(e) {
     var contents = e.target.result;
@@ -96,6 +112,7 @@ Released   : 20120513
   reader.readAsText(file);
 }
 
+//read and define what to do after loading Eleve.json file for update
 function readSingleFileClasse(e) {
   var file = e.target.files[0];
   if (!file) {
@@ -109,6 +126,7 @@ function readSingleFileClasse(e) {
   reader.readAsText(file);
 }
 
+//read and define what to do after loading Skill.json file for update
 function readSingleFileSkill(e) {
   var file = e.target.files[0];
   if (!file) {
@@ -122,80 +140,112 @@ function readSingleFileSkill(e) {
   reader.readAsText(file);
 }
 
+//this function is called when Classe file is loaded
 function displayContents(contents) {
+	//get the content of the file
   var element = document.getElementById('file-content');
   element.innerHTML = contents;
-  general = JSON.parse(contents);
-	//document.getElementById('file-inputClasse').files[0].name = general.studentFile;
-	//document.getElementById('file-inputSkill').files[0].name = general.skillFile;
+
+	//parse into a general Classe object
+	general = JSON.parse(contents);
+
+	//set classe updatable
 	update = true;
 	document.getElementById('createClass').innerHTML = "Mettre à jour une Classe";
 	document.getElementById('butt').innerHTML = "Mettre à jour";
 
+	//create display of data in general
   loadClasse(general);
 }
 
+//this function count and return diffs between s1 and s2
 function countDiff(s1, s2) {
+	// 0 diffs at first
 	var diffCount = 0;
+
+	//check if one string is longer than another
 	var diff = s1.length - s2.length;
 	var len = 0;
 	var j = 0;
+
+	//s1 is the longest string or equals
 	if(diff >= 0)
 	{
+		//we take the shortest string as reference
 		len = s2.length;
+
+		//we already know there is diffs in thoses strings
 		diffCount += diff;
+
 
 		for(var i = 0; i < len; i++)
 		{
+			//char are not the same, so we check if maybe it is just part of the string length diff
 			if(s1[j] != s2[i])
 			{
 				diff -= 1;
+
+				//we know that the difference has not been counted so we add a diff and go on in s1
 				if(diff <= -1)
 				{
 					j++;
-					i--;
 					diffCount++;
 				}
+				//this diff is maybe due to length count so we only progress in the longest string, in this case s1
 				else {
+					j++;
 					i--;
 				}
 			}
+			//same char we go on
 			else
 				j++;
 		}
 	}
+
+	//s2 is the longest string
 	else {
+		//we take the shortest string as reference
 		len = s1.length;
+
+		//we already know there is diffs in thoses strings which is < 0
 		diff = -diff;
 		diffCount += diff;
 
-		console.log(diffCount);
 		for(var i = 0; i < len; i++)
 		{
+			//char are not the same, so we check if maybe it is just part of the string length diff
 			if(s1[i] != s2[j])
 			{
 				diff -= 1;
+				//we know that the difference has not been counted so we add a diff and go on in s2
 				if(diff <= -1)
 				{
 					j++;
-					i--;
 					diffCount++;
 				}
+				//this diff is maybe due to length count so we only progress in the longest string, in this case s2
 				else {
+					j++;
 					i--;
 				}
 			}
+			//same char we go on
 			else
 				j++;
 		}
 	}
-	console.log(diffCount);
+
+	//return the amount of differences in between the two strings
 	return diffCount;
 }
 
 function checkStudent() {
+
+	//count diff between 2 array
 	var diff = classesG.eleve.length - general.eleve.length;
 
+	//for every entry we check if they are the same (or a little difference)
 	for(var i = 0; i < general.eleve.length; i++)
 	{
 		var nom = false;
@@ -213,23 +263,28 @@ function checkStudent() {
 			if(countDiff(general.eleve[i].eleve.prenom, classesG.eleve[i].prenom) <= 3)
 				prenom = true;
 
+//if they are the same we take the new entry as reference
 		if(nom && prenom)
 		{
 			general.eleve[i].eleve = classesG.eleve[i];
 		}
 		else// if (!nom && !prenom)
 		{
-			//new student
+			//they are not the same and the new array is longer -> new student
 			if(diff >= 0)
 			{
 				console.log("add");
 
+				//create an object to put in the general array
 				var newStudent = {
 					eleve:classesG.eleve[i],
+					observations:["none"],
 					skillArray:general.skills
 					};
 
 				general.eleve.splice(i, 0, newStudent);
+
+				//update diff
 				diff = classesG.eleve.length - general.eleve.length;
 				i=0;
 			}
@@ -242,13 +297,8 @@ function checkStudent() {
 				i=0;
 			}
 		}
-		// else
-		// {
-		// 	console.log(nom);
-		// 	console.log(prenom);
-		// }
 	}
-
+	//if there is a diff left we add the last students
 	if(diff > 0)
 	{
 		for(var j =general.eleve.length; j < classesG.eleve.length; j++)
@@ -257,6 +307,7 @@ function checkStudent() {
 
 			var newStudent = {
 				eleve:classesG.eleve[j],
+				observations:["none"],
 				skillArray:general.skills
 				};
 
@@ -269,29 +320,55 @@ function checkStudent() {
 
 function checkSkill() {
 
-
+//check if they are more entry in skillsG array
 	var diff = skillsG.skill.length - general.skills.length;
-	console.log(diff);
+
+//for every skills we check if they have same name and matiere
 	for(var i = 0; i < general.skills.length; i++)
 	{
+
 		var nom = false;
 		var matiere = false;
 
-		if(general.skills[i].skill.name == skillsG.skill[i].name)
-			nom = true;
-		else
-			if(countDiff(general.skills[i].skill.name, skillsG.skill[i].name) <= 3)
+		if(i < skillsG.skill.length)
+		{
+			if(general.skills[i].skill.imgPath == skillsG.skill[i].imgPtath)
+			{
 				nom = true;
-
-		if(general.skills[i].skill.matiere == skillsG.skill[i].matiere)
-			matiere = true;
-		else
-			if(countDiff(general.skills[i].skill.matiere, skillsG.skill[i].matiere) <= 3)
 				matiere = true;
+			}
+			else
+			{
+				if(general.skills[i].skill.name == skillsG.skill[i].name)
+					nom = true;
+				else
+				{
+					var dif = countDiff(general.skills[i].skill.name, skillsG.skill[i].name);
+					console.log("dif name = ", dif);
+					if( dif <= 3)
+						nom = true;
+				}
+
+
+				if(general.skills[i].skill.matiere == skillsG.skill[i].matiere)
+					matiere = true;
+				else
+				{
+					var dif = countDiff(general.skills[i].skill.matiere, skillsG.skill[i].matiere);
+					console.log("dif matiere = ", dif);
+					if(dif <= 3)
+						matiere = true;
+				}
+			}
+		}
 
 		if(nom && matiere)
 		{
 			general.skills[i].skill = skillsG.skill[i];
+			for(var j = 0; j < general.eleve.length; j++)
+			{
+				general.eleve[j].skillArray[i].skill = general.skills[i].skill;
+			}
 		}
 		else// if (!nom && !prenom)
 		{
@@ -299,7 +376,8 @@ function checkSkill() {
 			if(diff >= 0)
 			{
 				console.log("add");
-
+				console.log("general "+i+"=",general.skills[i].skill);
+				console.log("skills "+i+"=",skillsG.skill[i]);
 				var newSkill = {
 					name:skillsG.skill[i].name,
 					type:skillsG.skill[i].type,
@@ -319,16 +397,28 @@ function checkSkill() {
 
 				console.log(newSkill);
 				general.skills.splice(i, 0, newskillEleve);
+				for(var j = 0; j < general.eleve.length; j++)
+				{
+					general.eleve[j].skillArray.splice(i, 0, clone(newskillEleve));
+				}
 				diff = skillsG.skill.length - general.skills.length;
-				i=0;
+				if(i < skillsG.skill.length)
+					i=0;
 			}
 			//delete student
 			else if(diff < 0)
 			{
 				console.log("del");
+				console.log("general "+i+"=",general.skills[i].skill);
+				console.log("skills "+i+"=",skillsG.skill[i]);
 				console.log(general.skills.splice(i, 1));
+				for(var j = 0; j < general.eleve.length; j++)
+				{
+					general.eleve[j].skillArray.splice(i, 1);
+				}
 				diff = skillsG.skill.length - general.skills.length;
-				i=0;
+				if(i < skillsG.skill.length)
+					i=0;
 			}
 		}
 	}
@@ -355,10 +445,14 @@ function checkSkill() {
 
 			console.log(newSkill);
 			general.skills.splice(j, 0, newskillEleve);
+			for(var jj = 0; jj < general.eleve.length; jj++)
+			{
+				general.eleve[jj].skillArray.splice(j, 0, clone(newskillEleve));
+			}
 			diff = skillsG.skill.length - general.skills.length;
 		}
 	}
-	dispatchToStudent();
+	//dispatchToStudent();
 }
 
 function dispatchToStudent()
@@ -501,6 +595,7 @@ function displayContentsSkill(contents) {
 	  for(var i = 0; i < eleveCount; i++) {
 	  	var eleve = {
 	  		eleve:JSON.parse(JSON.stringify(classesG.eleve[i])),
+				observations:["none"],
 	  		skillArray:JSON.parse(JSON.stringify(skillArray))
 	  	};
 	  	general.eleve[i] = eleve;
@@ -550,6 +645,7 @@ var skillEleve = {
 
 var genClasse = {
 	eleve:genEleve,
+	observations:["none"],
 	skillArray:[skillEleve]
 	};
 
@@ -703,7 +799,7 @@ function addSkillPrint(count,eleve, matiere, skill) {
 		{
 			if(boxes == false && skill.photoPath.length > 3)
 			{
-				ret += "</tr><tr><td>" + AddCheckBoxPrint(eleve, count, skill.fail, skill.almost, skill.succeed) + "</td>";
+				ret += "</tr><tr><td>" + AddCheckBoxPrint(eleve, count,skill.worked, skill.evaluated, skill.fail, skill.almost, skill.succeed) + "</td>";
 				boxes = true;
 			}
 			else
@@ -769,6 +865,24 @@ function loadPrint(skillArray, eleve) {
 	result += "<h2>Résumé</h2>";
 	result += "<canvas id=\"camembert\" width=\"900\" height=\"400\"></canvas>";
 
+
+	if(general.eleve[eleve].observations != undefined)
+	{
+		result += "<table><tr><td>"
+		result += "<text>Observations :</text></td>";
+		for(var i = 0; i < general.eleve[eleve].observations.length; i++)
+		{
+			result += "<tr><td></td><td><textarea id=\"obs"+i+"\" \" rows=\"4\" cols=\"50\">";
+			if(general.eleve[eleve].observations[i] != "none")
+				result += general.eleve[eleve].observations[i];
+			result += "</textarea></td></tr>";
+		}
+		result += "</table>";
+	}
+
+
+
+
 	for(var j = 0; j < matiere.length; j++)
 	{
 		if(j != 0)
@@ -826,10 +940,21 @@ function printThing(s, donnees, colors, legende)
 	var w = window.open("./printPage.html");
 }
 
+function updateObs(textarea, eleve,  id)
+{
+	general.eleve[eleve].observations[id] = textarea.value;
+	loadMatiere(general, eleve);
+}
+
+function addObs(eleve)
+{
+	general.eleve[eleve].observations.push("none");
+	loadMatiere(general, eleve);
+}
+
 function loadMatiere(skillArray, eleve) {
 
 	var skillDiv = document.getElementById("skills");
-	//skillArray is empty so we fill with default value and will create a new json
 	//skillDiv.innerHTML = "<div id='skill0' >"+ addText(skillArray.eleve[eleve].eleve.prenom) + " "+ skillArray.eleve[eleve].eleve.name +"</br> <img src'"+skillArray.eleve[eleve].eleve.imgPath+"' width='75' height'75'/></div>";
 	var matiere = [];
 	var cam = [];
@@ -838,6 +963,31 @@ function loadMatiere(skillArray, eleve) {
 	var result = "";
 	result += "<h2>Résumé</h2>";
 	result += "<canvas id=\"camembert\" width=\"900\" height=\"400\"></canvas>";
+
+	result += "<table><tr><td>";
+	result += "<text>Observations :</text></td>";
+	if(general.eleve[eleve].observations == undefined)
+	{
+		general.eleve[eleve].observations = ["none"];
+	}
+
+
+	result += "<td><textarea id=\"obs0\" onchange=\"updateObs(this,"+eleve+", 0)\" rows=\"4\" cols=\"50\">";
+
+	if(general.eleve[eleve].observations[0] != "none")
+		result += general.eleve[eleve].observations[0];
+
+	result += "</textarea></td></tr>";
+
+	for(var i = 1; i < general.eleve[eleve].observations.length; i++)
+	{
+		result += "<tr><td></td><td><textarea id=\"obs"+i+"\" onchange=\"updateObs(this,"+eleve+", "+i+")\" rows=\"4\" cols=\"50\">";
+		if(general.eleve[eleve].observations[i] != "none")
+			result += general.eleve[eleve].observations[i];
+		result += "</textarea></td></tr>";
+	}
+	result += "</table>";
+	result += "<button align='right' onclick='addObs("+eleve+")'> + </button><br><br><br>";
 	for(var i = 0; i < general.eleve[eleve].skillArray.length; i++)
 	{
 		for(var j = 0; j < matiere.length; j++) {
