@@ -898,11 +898,15 @@ function loadPrint(skillArray, eleve) {
 			}
 		}
 	}
-
+	var maxMat = [];
 	for(var j = 0; j < matiere.length; j++)
 	{
 		if(cam[j] == undefined)
+		{
 			cam.push(0);
+			maxMat.push(0)
+		}
+
 		for(var i = 0; i < general.eleve[eleve].skillArray.length; i++)
 		{
 			if(matiere[j] == general.eleve[eleve].skillArray[i].skill.matiere)
@@ -913,19 +917,21 @@ function loadPrint(skillArray, eleve) {
 				 	cam[j] += valueAlmost;
 				if(general.eleve[eleve].skillArray[i].fail)
 					cam[j] += valueFail;
+				maxMat[j] += valueSucceed;
 			}
 		}
 	}
 	var max = 0;
 
 	for(var j = 0; j < cam.length; j++)
+		cam[j] = cam[j]/maxMat[j] * 100;
+
+	for(var j = 0; j < cam.length; j++)
 		max += cam[j];
 
 	for(var j = 0; j < cam.length; j++)
 		cam[j] = cam[j]/max * 100;
-
-	//graphe_camembert(cam, color, matiere);
-
+		
 	printThing(result, cam, color, matiere);
 
 }
@@ -1007,10 +1013,15 @@ function loadMatiere(skillArray, eleve) {
 	result += "</br><p class='links'><a onclick='loadClasse(general)''>Retour Classe</a>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a onclick='save()'>Sauvegarder</a></p>";
 	skillDiv.innerHTML = result;
 
+	var maxMat = [];
 	for(var j = 0; j < matiere.length; j++)
 	{
 		if(cam[j] == undefined)
+		{
 			cam.push(0);
+			maxMat.push(0)
+		}
+
 		for(var i = 0; i < general.eleve[eleve].skillArray.length; i++)
 		{
 			if(matiere[j] == general.eleve[eleve].skillArray[i].skill.matiere)
@@ -1021,10 +1032,14 @@ function loadMatiere(skillArray, eleve) {
 				 	cam[j] += valueAlmost;
 				if(general.eleve[eleve].skillArray[i].fail)
 					cam[j] += valueFail;
+				maxMat[j] += valueSucceed;
 			}
 		}
 	}
 	var max = 0;
+
+	for(var j = 0; j < cam.length; j++)
+		cam[j] = cam[j]/maxMat[j] * 100;
 
 	for(var j = 0; j < cam.length; j++)
 		max += cam[j];
@@ -1033,7 +1048,6 @@ function loadMatiere(skillArray, eleve) {
 		cam[j] = cam[j]/max * 100;
 
 	graphe_camembert(cam, color, matiere);
-	//console.log(cam);
 }
 
 function graphe_camembert(donnees, stylecolors, legendes) {
