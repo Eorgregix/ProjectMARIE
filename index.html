@@ -250,22 +250,42 @@ function checkStudent() {
 	{
 		var nom = false;
 		var prenom = false;
-
-		if(general.eleve[i].eleve.name == classesG.eleve[i].name)
-			nom = true;
-		else
-			if(countDiff(general.eleve[i].eleve.name, classesG.eleve[i].name) <= 3)
+		console.log(i);
+		if(i < classesG.eleve.length)
+		{
+			if(general.eleve[i].eleve.imgPath == classesG.eleve[i].imgPath)
+			{
 				nom = true;
-
-		if(general.eleve[i].eleve.prenom == classesG.eleve[i].prenom)
-			prenom = true;
-		else
-			if(countDiff(general.eleve[i].eleve.prenom, classesG.eleve[i].prenom) <= 3)
 				prenom = true;
+			}
+			else
+			{
+				if(general.eleve[i].eleve.name == classesG.eleve[i].name)
+					nom = true;
+				else if (general.eleve[i].eleve.name.length > 3 && classesG.eleve[i].name.length > 3)
+				{
+					var dif = countDiff(general.eleve[i].eleve.name, classesG.eleve[i].name);
+					console.debug("dif name = ", dif);
+					if( dif <= 3)
+						nom = true;
+				}
 
+				if(general.eleve[i].eleve.prenom == classesG.eleve[i].prenom)
+					prenom = true;
+				else if (general.eleve[i].eleve.prenom.length > 3 && classesG.eleve[i].prenom.length > 3)
+				{
+					var dif = countDiff(general.eleve[i].eleve.prenom, classesG.eleve[i].prenom);
+					console.debug("dif matiere = ", dif);
+					if(dif <= 3)
+						prenom = true;
+				}
+			}
+		}
 //if they are the same we take the new entry as reference
 		if(nom && prenom)
 		{
+
+			console.log("==", general.eleve[i].eleve.name);
 			general.eleve[i].eleve = classesG.eleve[i];
 		}
 		else// if (!nom && !prenom)
@@ -273,7 +293,7 @@ function checkStudent() {
 			//they are not the same and the new array is longer -> new student
 			if(diff >= 0)
 			{
-				console.log("add");
+				console.log("add", i);
 
 				//create an object to put in the general array
 				var newStudent = {
@@ -281,12 +301,12 @@ function checkStudent() {
 					observations:["none"],
 					skillArray:general.skills
 					};
-
+				console.log(newStudent);
 				general.eleve.splice(i, 0, newStudent);
 
 				//update diff
 				diff = classesG.eleve.length - general.eleve.length;
-				i=0;
+				i=-1;
 			}
 			//delete student
 			else if(diff < 0)
@@ -294,7 +314,7 @@ function checkStudent() {
 				console.log("del");
 				console.log(general.eleve.splice(i, 1));
 				diff = classesG.eleve.length - general.eleve.length;
-				i=0;
+				i=-1;
 			}
 		}
 	}
@@ -311,6 +331,7 @@ function checkStudent() {
 				skillArray:general.skills
 				};
 
+			console.log(newStudent);
 			general.eleve.splice(j, 0, newStudent);
 		}
 	}
@@ -332,7 +353,7 @@ function checkSkill() {
 
 		if(i < skillsG.skill.length)
 		{
-			if(general.skills[i].skill.imgPath == skillsG.skill[i].imgPtath)
+			if(general.skills[i].skill.imgPath == skillsG.skill[i].imgPath)
 			{
 				nom = true;
 				matiere = true;
@@ -344,7 +365,7 @@ function checkSkill() {
 				else
 				{
 					var dif = countDiff(general.skills[i].skill.name, skillsG.skill[i].name);
-					console.log("dif name = ", dif);
+					console.debug("dif name = ", dif);
 					if( dif <= 3)
 						nom = true;
 				}
@@ -355,7 +376,7 @@ function checkSkill() {
 				else
 				{
 					var dif = countDiff(general.skills[i].skill.matiere, skillsG.skill[i].matiere);
-					console.log("dif matiere = ", dif);
+					console.debug("dif matiere = ", dif);
 					if(dif <= 3)
 						matiere = true;
 				}
@@ -375,9 +396,9 @@ function checkSkill() {
 			//new student
 			if(diff >= 0)
 			{
-				console.log("add");
-				console.log("general "+i+"=",general.skills[i].skill);
-				console.log("skills "+i+"=",skillsG.skill[i]);
+				console.debug("add");
+				console.debug("general "+i+"=",general.skills[i].skill);
+				console.debug("skills "+i+"=",skillsG.skill[i]);
 				var newSkill = {
 					name:skillsG.skill[i].name,
 					type:skillsG.skill[i].type,
@@ -395,7 +416,7 @@ function checkSkill() {
 					};
 
 
-				console.log(newSkill);
+				console.debug(newSkill);
 				general.skills.splice(i, 0, newskillEleve);
 				for(var j = 0; j < general.eleve.length; j++)
 				{
@@ -408,10 +429,10 @@ function checkSkill() {
 			//delete student
 			else if(diff < 0)
 			{
-				console.log("del");
-				console.log("general "+i+"=",general.skills[i].skill);
-				console.log("skills "+i+"=",skillsG.skill[i]);
-				console.log(general.skills.splice(i, 1));
+				console.debug("del");
+				console.debug("general "+i+"=",general.skills[i].skill);
+				console.debug("skills "+i+"=",skillsG.skill[i]);
+				console.debug(general.skills.splice(i, 1));
 				for(var j = 0; j < general.eleve.length; j++)
 				{
 					general.eleve[j].skillArray.splice(i, 1);
@@ -443,7 +464,7 @@ function checkSkill() {
 				};
 
 
-			console.log(newSkill);
+			console.debug(newSkill);
 			general.skills.splice(j, 0, newskillEleve);
 			for(var jj = 0; jj < general.eleve.length; jj++)
 			{
@@ -489,7 +510,7 @@ function dispatchToStudent()
 			//new student
 			if(diff >= 0)
 			{
-				console.log("add");
+				console.debug("add");
 
 				var newSkill = {
 					name:general.skills[i].skill.name,
@@ -508,7 +529,7 @@ function dispatchToStudent()
 					};
 
 
-				console.log(newSkill);
+				console.debug(newSkill);
 				for(var j =0; j < general.eleve.length; j++)
 				{
 					general.eleve[j].skillArray.splice(i, 0, newskillEleve);
@@ -519,10 +540,10 @@ function dispatchToStudent()
 			//delete student
 			else if(diff < 0)
 			{
-				console.log("del");
+				console.debug("del");
 				for(var j =0; j < general.eleve.length; j++)
 				{
-					console.log(general.eleve[j].skillArray.splice(i, 1));
+					console.debug(general.eleve[j].skillArray.splice(i, 1));
 				}
 				diff = general.skills.length - general.eleve[0].skillArray.length;
 				i=0;
@@ -550,7 +571,7 @@ function dispatchToStudent()
 				};
 
 
-			console.log(newSkill);
+			console.debug(newSkill);
 			for(var k =0; k < general.eleve.length; k++)
 			{
 				general.eleve[k].skillArray.splice(k, 0, newskillEleve);
@@ -571,7 +592,7 @@ function displayContentsClasse(contents) {
 		document.getElementById('skillText').style = "";
 	}
 	else{
-		console.log("checkStudent");
+		console.debug("checkStudent");
 		checkStudent();
 	}
 }
@@ -603,7 +624,7 @@ function displayContentsSkill(contents) {
   loadClasse(general);
 	}
 	else{
-		console.log("checkSkill");
+		console.debug("checkSkill");
 		checkSkill();
 	}
 }
@@ -931,7 +952,7 @@ function loadPrint(skillArray, eleve) {
 
 	for(var j = 0; j < cam.length; j++)
 		cam[j] = cam[j]/max * 100;
-		
+
 	printThing(result, cam, color, matiere);
 
 }
