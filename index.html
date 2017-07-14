@@ -59,6 +59,8 @@ Released   : 20120513
 								<pre id="file-contentClasse" style="display:none"></pre>
 								<tr><td><text id="skillText" style="display:none">Compétences :</text></td><td><input type="file" id="file-inputSkill" style="display:none"/></td></tr>
 								<pre id="file-contentSkill" style="display:none"></pre>
+								<tr><td><text id="fusionText" style="display:none">Fusion    :</text></td><td><input type="file" id="file-inputFusion" style="display:none"/></td></tr>
+								<pre id="file-contentFusion" style="display:none"></pre>
 							</table>
 						</div>
 					</div>
@@ -139,6 +141,21 @@ function readSingleFileSkill(e) {
   };
   reader.readAsText(file);
 }
+
+//read and define what to do after loading Classe.json file for fusion
+function readSingleFileFusion(e) {
+  var file = e.target.files[0];
+  if (!file) {
+    return;
+  }
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var contents = e.target.result;
+    displayContentsFusion(contents);
+  };
+  reader.readAsText(file);
+}
+
 
 //this function is called when Classe file is loaded
 function displayContents(contents) {
@@ -281,11 +298,9 @@ function checkStudent() {
 				}
 			}
 		}
-//if they are the same we take the new entry as reference
+		//if they are the same we take the new entry as reference
 		if(nom && prenom)
 		{
-
-			console.log("==", general.eleve[i].eleve.name);
 			general.eleve[i].eleve = classesG.eleve[i];
 		}
 		else// if (!nom && !prenom)
@@ -293,15 +308,13 @@ function checkStudent() {
 			//they are not the same and the new array is longer -> new student
 			if(diff >= 0)
 			{
-				console.log("add", i);
-
 				//create an object to put in the general array
 				var newStudent = {
 					eleve:classesG.eleve[i],
 					observations:["none"],
 					skillArray:general.skills
 					};
-				console.log(newStudent);
+
 				general.eleve.splice(i, 0, newStudent);
 
 				//update diff
@@ -311,8 +324,6 @@ function checkStudent() {
 			//delete student
 			else if(diff < 0)
 			{
-				console.log("del");
-				console.log(general.eleve.splice(i, 1));
 				diff = classesG.eleve.length - general.eleve.length;
 				i=-1;
 			}
@@ -323,7 +334,6 @@ function checkStudent() {
 	{
 		for(var j =general.eleve.length; j < classesG.eleve.length; j++)
 		{
-			console.log("add");
 
 			var newStudent = {
 				eleve:classesG.eleve[j],
@@ -331,7 +341,6 @@ function checkStudent() {
 				skillArray:general.skills
 				};
 
-			console.log(newStudent);
 			general.eleve.splice(j, 0, newStudent);
 		}
 	}
@@ -341,10 +350,10 @@ function checkStudent() {
 
 function checkSkill() {
 
-//check if they are more entry in skillsG array
+	//check if they are more entry in skillsG array
 	var diff = skillsG.skill.length - general.skills.length;
 
-//for every skills we check if they have same name and matiere
+	//for every skills we check if they have same name and matiere
 	for(var i = 0; i < general.skills.length; i++)
 	{
 
@@ -629,6 +638,32 @@ function displayContentsSkill(contents) {
 	}
 }
 
+function displayContentsFusion(contents) {
+  var element = document.getElementById('file-contentFusion');
+  element.innerHTML = contents;
+  fusion = JSON.parse(contents);
+	for(var i = 0; i < fusion.eleve.length; i++)
+	{
+		general.eleve.splice(i, 0, clone(fusion.eleve[i]));
+	}
+	general.eleve.sort(function(a, b) {
+			if(a.eleve.name < b.eleve.name){
+				return -1;
+			}
+			if(a.eleve.name > b.eleve.name){
+				return 1;
+			}
+			if(a.eleve.prenom < b.eleve.prenom){
+				return -1;
+			}
+			if(a.eleve.prenom > b.eleve.prenom){
+				return 1;
+			}
+			return 0
+	});
+	loadClasse(general);
+}
+
 document.getElementById('file-input')
   .addEventListener('change', readSingleFile, false);
 
@@ -637,6 +672,9 @@ document.getElementById('file-inputClasse')
 
 document.getElementById('file-inputSkill')
   .addEventListener('change', readSingleFileSkill, false);
+
+document.getElementById('file-inputFusion')
+  .addEventListener('change', readSingleFileFusion, false);
 
 var genSkill = {
 	name:"Nom",
@@ -676,6 +714,7 @@ var skillsG = {classe:"Classe", skill:[genSkill]};
 var classesG = {classe:"Classe", eleve:[genEleve]};
 
 var general = {classe:"Classe", skills:[skillEleve], eleve:[genClasse]};
+var fusion  = {classe:"Classe", skills:[skillEleve], eleve:[genClasse]};
 
 var update = false;
 var skillCount = 1;
@@ -688,6 +727,8 @@ function createClasse() {
 	if(update == true){
 		document.getElementById('skillText').style = "";
 		document.getElementById('file-inputSkill').style = "";
+		document.getElementById('fusionText').style = "";
+		document.getElementById('file-inputFusion').style = "";
 	}
 }
 
