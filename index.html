@@ -1375,7 +1375,7 @@ function addImg(matiere, id, num, title, content, eleve, skill) {
 	var ret = "<td width='210' id='td"+id+"'>";
 	if (content == undefined || content == "none")
 	{
-		ret += "<input type='file' data-matiere=\""+matiere+"\" data-num="+num+" data-id=\""+id+"\" data-eleve="+eleve+" data-skill="+skill+" onchange='readURL(this, this.dataset.matiere, this.dataset.num, this.dataset.id, this.dataset.eleve, this.dataset.skill);' /></td>";
+		ret += "<input type='file' data-matiere=\""+matiere+"\" data-num="+num+" data-id=\""+id+"\" data-eleve="+eleve+" data-skill="+skill+" onchange='readURL(this, this.dataset.matiere, this.dataset.num, this.dataset.id, this.dataset.eleve, this.dataset.skill);' multiple /></td>";
 	}
 	else
 	{
@@ -1386,28 +1386,16 @@ function addImg(matiere, id, num, title, content, eleve, skill) {
 }
 
 function readURL(input, matiere, num, id, eleve, skill) {
-    if (input.files && input.files[0]) {
-        var reader = new FileReader();
-
-		general.eleve[eleve].skillArray[skill].photoPath[num] = "./photo/"+input.files[0].name;
-        reader.onload = function (e) {
-            document.getElementById("td"+id).innerHTML = "<img id='photo"+id+"' width='200' height='200' src=\"./photo/"+input.files[0].name+"\" data-matiere=\""+matiere+"\" onclick='resetIMG ("+eleve+", "+skill+", this.dataset.matiere, "+num+")'/></td>";
-						var none = false;
-						for(var i = 0; i < general.eleve[eleve].skillArray[skill].photoPath.length; i++)
-						{
-							if (general.eleve[eleve].skillArray[skill].photoPath[i] == "none")
-							{
-								none = true;
-							}
-						}
-						if(!none)
-							general.eleve[eleve].skillArray[skill].photoPath.push("none");
-						loadEleve(general, eleve, matiere);
-        	//general.eleve[eleve].skillArray[skill].photoPath = document.getElementById("photo"+id).src;
-        };
-
-        reader.readAsDataURL(input.files[0]);
-    }
+    if (input.files && input.files[0])
+		{
+			for(var j = 0; j < input.files.length; j++)
+			{
+				general.eleve[eleve].skillArray[skill].photoPath[parseInt(num) + j] = "./photo/"+input.files[j].name;
+				if(general.eleve[eleve].skillArray[skill].photoPath[general.eleve[eleve].skillArray[skill].photoPath.length-1] != "none")
+					general.eleve[eleve].skillArray[skill].photoPath.push("none");
+			}
+			loadEleve(general, eleve, matiere);
+		}
 }
 
 function resetIMG (eleve, skill, matiere, num) {
