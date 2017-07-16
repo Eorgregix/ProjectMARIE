@@ -1390,7 +1390,7 @@ function readURL(input, matiere, num, id, eleve, skill) {
 		{
 			for(var j = 0; j < input.files.length; j++)
 			{
-				general.eleve[eleve].skillArray[skill].photoPath[parseInt(num) + j] = "./photo/"+input.files[j].name;
+				general.eleve[eleve].skillArray[skill].photoPath[parseInt(num) + j] = "./photo/"+general.eleve[eleve].eleve.prenom+"/"+matiere+"/"+input.files[j].name;
 				if(general.eleve[eleve].skillArray[skill].photoPath[general.eleve[eleve].skillArray[skill].photoPath.length-1] != "none")
 					general.eleve[eleve].skillArray[skill].photoPath.push("none");
 			}
