@@ -1379,7 +1379,10 @@ function addImg(matiere, id, num, title, content, eleve, skill) {
 	}
 	else
 	{
-		ret += "<img id='"+id+"' width='200' height='200' src=\""+content+"\" data-matiere=\""+matiere+"\" onclick='resetIMG ("+eleve+", "+skill+", this.dataset.matiere, "+num+")'/></td>";
+		var res = content.split("/");
+		if(res.length > 1)
+			general.eleve[eleve].skillArray[skill].photoPath[num] = content = res[res.length-1];
+		ret += "<img id='"+id+"' width='200' height='200' src=\"./photo/"+general.eleve[eleve].eleve.prenom+"/"+matiere+"/"+content+"\" data-matiere=\""+matiere+"\" onclick='resetIMG ("+eleve+", "+skill+", this.dataset.matiere, "+num+")'/></td>";
 	}
 
 	return ret;
@@ -1390,7 +1393,7 @@ function readURL(input, matiere, num, id, eleve, skill) {
 		{
 			for(var j = 0; j < input.files.length; j++)
 			{
-				general.eleve[eleve].skillArray[skill].photoPath[parseInt(num) + j] = "./photo/"+general.eleve[eleve].eleve.prenom+"/"+matiere+"/"+input.files[j].name;
+				general.eleve[eleve].skillArray[skill].photoPath[parseInt(num) + j] = input.files[j].name;
 				if(general.eleve[eleve].skillArray[skill].photoPath[general.eleve[eleve].skillArray[skill].photoPath.length-1] != "none")
 					general.eleve[eleve].skillArray[skill].photoPath.push("none");
 			}
