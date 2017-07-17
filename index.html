@@ -1382,7 +1382,7 @@ function addImg(matiere, id, num, title, content, eleve, skill) {
 		var res = content.split("/");
 		if(res.length > 1)
 			general.eleve[eleve].skillArray[skill].photoPath[num] = content = res[res.length-1];
-		ret += "<img id='"+id+"' width='200' height='200' src=\"./photo/"+general.eleve[eleve].eleve.prenom+"/"+matiere+"/"+content+"\" data-matiere=\""+matiere+"\" onclick='resetIMG ("+eleve+", "+skill+", this.dataset.matiere, "+num+")'/></td>";
+		ret += "<img id='"+id+"' width='200' height='200' src=\"./photo/"+general.eleve[eleve].eleve.name+" "+general.eleve[eleve].eleve.prenom+"/"+matiere+"/"+content+"\" data-matiere=\""+matiere+"\" onclick='resetIMG ("+eleve+", "+skill+", this.dataset.matiere, "+num+")'/></td>";
 	}
 
 	return ret;

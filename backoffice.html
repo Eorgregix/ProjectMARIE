@@ -198,6 +198,12 @@ function save() {
 				path += "images"+split[j];
 			}
 		}
+		var mat = document.getElementById("matiere"+i).value;
+		if(!isFileProof(mat))
+		{
+			alert('aucune matiere ne doit comporter de caractere spéciaux <>:?*/\\".  : '+ mat);
+			return;
+		}
 		var sk = {
 		name:document.getElementById("nom"+i).value,
 		type:document.getElementById("type"+i).value,
@@ -305,6 +311,13 @@ function addslashes(ch) {
 	ch = ch.replace(/\'/g,"\\'")
 	ch = ch.replace(/\"/g,"\\\"")
 	return ch
+}
+
+function isFileProof(mat)
+{
+	if(mat.includes("\\") || mat.includes('/') || mat.includes(':') || mat.includes('.') || mat.includes('?') || mat.includes('"') || mat.includes('>') ||mat.includes('<') || mat.includes('*') || mat.includes('|'))
+		return false;
+	return true;
 }
 </script>
 </body>

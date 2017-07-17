@@ -181,6 +181,18 @@ function save() {
 	//skillsG.skill = [];
 	for(var i = 0; i < skillCount; i++)
 	{
+		var name = document.getElementById("nom"+i).value;
+		var prenom = document.getElementById("prenom"+i).value;
+		if(!isFileProof(name))
+		{
+			alert('aucun nom ne doit comporter de caractere spéciaux <>:?*/\\". : ' + name);
+			return;
+		}
+		if(!isFileProof(prenom))
+		{
+			alert('aucun prenom ne doit comporter de caractere spéciaux <>:?*/\\". : '+ prenom);
+			return;
+		}
 		var path = document.getElementById("img"+i).src.split("images")[1];
 		var sk = {
 		name:document.getElementById("nom"+i).value,
@@ -265,6 +277,12 @@ function readURL(input, id, count) {
     }
 }
 
+function isFileProof(mat)
+{
+	if(mat.includes("\\") || mat.includes('/') || mat.includes(':') || mat.includes('.') || mat.includes('?') || mat.includes('"') || mat.includes('>') ||mat.includes('<') || mat.includes('*') || mat.includes('|'))
+		return false;
+	return true;
+}
 </script>
 </body>
 </html>
