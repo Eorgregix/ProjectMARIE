@@ -324,6 +324,7 @@ function checkStudent() {
 			//delete student
 			else if(diff < 0)
 			{
+				general.eleve.splice(i, 1);
 				diff = classesG.eleve.length - general.eleve.length;
 				i=-1;
 			}
