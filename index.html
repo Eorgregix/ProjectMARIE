@@ -61,6 +61,7 @@ Released   : 20120513
 								<pre id="file-contentSkill" style="display:none"></pre>
 								<tr><td><text id="fusionText" style="display:none">Fusion    :</text></td><td><input type="file" id="file-inputFusion" style="display:none"/></td></tr>
 								<pre id="file-contentFusion" style="display:none"></pre>
+								<tr><td><p id="extractStudent" style="display:none" class='links'><a onclick='ExtractStudent()'>Extraire Eleves</a></p></td></tr>
 							</table>
 						</div>
 					</div>
@@ -397,7 +398,7 @@ function checkSkill() {
 		{
 			general.skills[i].skill = skillsG.skill[i];
 			for(var j = 0; j < general.eleve.length; j++)
-			{		
+			{
 				//console.log(i);
 				if(general.eleve[j].skillArray[i] == undefined)
 				{
@@ -419,7 +420,7 @@ function checkSkill() {
 
 
 					console.debug(newSkill);
-					general.eleve[j].skillArray.splice(i, 0, newskillEleve);
+					general.eleve[j].skillArray.splice(i, 0, clone(newskillEleve));
 				}
 				else
 					general.eleve[j].skillArray[i].skill = general.skills[i].skill;
@@ -749,11 +750,12 @@ function createClasse() {
 	document.getElementById('butt').style = "display:none";
 	document.getElementById('classeText').style = "";
 	document.getElementById('file-inputClasse').style = "";
+	document.getElementById('file-inputFusion').style = "";
+	document.getElementById('extractStudent').style = "";
 	if(update == true){
 		document.getElementById('skillText').style = "";
 		document.getElementById('file-inputSkill').style = "";
 		document.getElementById('fusionText').style = "";
-		document.getElementById('file-inputFusion').style = "";
 	}
 }
 
@@ -1215,6 +1217,42 @@ function addCount() {
 	skillsG.skill.push(genSkill);
 	skillCount++;
 	loadSkills(skillsG);
+}
+
+function ExtractSkill() {
+	var dataStudent = [];
+	for(var i = 0; i < general.eleve.length; i++)
+	{
+		console.log(general.eleve[i].eleve);
+		dataStudent.push(general.eleve[i].eleve);
+	}
+	console.log(dataStudent);
+	var studentOut = {classe:"Classe", eleve:dataStudent};
+	var data = JSON.stringify(studentOut);
+	var url = "data:application/octet-stream,"+ encodeURIComponent(data);
+	//var newWindow = window.open(url, 'neuesDokument');
+	var link = document.createElement('a');
+    link.download = general.classe+"Eleve.json";
+    link.href = url;
+    link.click();
+}
+
+function ExtractStudent() {
+	var dataStudent = [];
+	for(var i = 0; i < general.eleve.length; i++)
+	{
+		console.log(general.eleve[i].eleve);
+		dataStudent.push(general.eleve[i].eleve);
+	}
+	console.log(dataStudent);
+	var studentOut = {classe:"Classe", eleve:dataStudent};
+	var data = JSON.stringify(studentOut);
+	var url = "data:application/octet-stream,"+ encodeURIComponent(data);
+	//var newWindow = window.open(url, 'neuesDokument');
+	var link = document.createElement('a');
+    link.download = general.classe+"Eleve.json";
+    link.href = url;
+    link.click();
 }
 
 function save() {
