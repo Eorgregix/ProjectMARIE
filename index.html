@@ -397,8 +397,32 @@ function checkSkill() {
 		{
 			general.skills[i].skill = skillsG.skill[i];
 			for(var j = 0; j < general.eleve.length; j++)
-			{
-				general.eleve[j].skillArray[i].skill = general.skills[i].skill;
+			{		
+				//console.log(i);
+				if(general.eleve[j].skillArray[i] == undefined)
+				{
+					var newSkill = {
+					name:skillsG.skill[i].name,
+					type:skillsG.skill[i].type,
+					matiere:skillsG.skill[i].matiere,
+					min:skillsG.skill[i].min,
+					max:skillsG.skill[i].max,
+					defaultVal:skillsG.skill[i].defaultVal,
+					imgPath:skillsG.skill[i].imgPath
+					};
+
+					var newskillEleve = {
+						skill:newSkill,
+						value:"0",
+						photoPath:["none"]
+						};
+
+
+					console.debug(newSkill);
+					general.eleve[j].skillArray.splice(i, 0, newskillEleve);
+				}
+				else
+					general.eleve[j].skillArray[i].skill = general.skills[i].skill;
 			}
 		}
 		else// if (!nom && !prenom)
