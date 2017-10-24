@@ -896,7 +896,7 @@ function addSkillPrint(count,eleve, matiere, skill) {
 			photoCount = 0;
 		}
 		if( skill.photoPath[i] != "none")
-			ret += addNoClickableImgPrint(count, "photo"+i+count, skill.photoPath[i], w, h);
+			ret += addNoClickableImgPrint(count, "photo"+i+count, "photo/"+general.eleve[eleve].eleve.name+" "+general.eleve[eleve].eleve.prenom+"/"+skill.skill.matiere+"/"+skill.photoPath[i], w, h);
 		photoCount++;
 	}
 
